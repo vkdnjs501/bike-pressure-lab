@@ -519,7 +519,7 @@ input[readonly]{cursor:default}
 }
 
 </style>
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.2 Preview</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.3 Preview</title>
 </head>
 <body>
 <div class="wrap">
@@ -530,7 +530,7 @@ input[readonly]{cursor:default}
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge" aria-label="Beta version">BETA 4.1.2</div>
+    <div class="badge" aria-label="Beta version">BETA 4.1.3</div>
   </div>
 
   <div class="grid">
@@ -736,7 +736,7 @@ input[readonly]{cursor:default}
     <details class="advanced footer-reference">
       <summary>참조</summary>
       <div class="advanced-body footer-copy">
-        BETA 4.1.2 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        BETA 4.1.3 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
         계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
       </div>
     </details>
@@ -744,7 +744,7 @@ input[readonly]{cursor:default}
 </div>
 
 
-  <script>
+<script>
 const CONSTANTS = Object.freeze({
   PSI_TO_BAR: 0.0689476,
   PSI_TO_KPA: 6.89476,
@@ -882,6 +882,7 @@ const DATA = Object.freeze({
   }
 });
 
+
 const {
   PSI_TO_BAR,
   PSI_TO_KPA,
@@ -996,14 +997,22 @@ function cst26x210ReferenceBand(input) {
 }
 
 function validateInput(input) {
-  const required = [input.rider, input.cargo, input.bikeWeight, input.width, input.wheel];
+  const inRange = (value, min, max) => isFiniteNumber(value) && value >= min && value <= max;
+  const optionalInRange = (value, min, max) => !isFiniteNumber(value) || inRange(value, min, max);
+  const supportedWheels = new Set([305, 355, 406, 457, 507, 559, 584, 622]);
 
   return (
-    required.every(isFiniteNumber) &&
-    input.rider > 0 &&
-    input.cargo >= 0 &&
-    input.bikeWeight > 0 &&
-    input.width > 0
+    inRange(input.rider, 20, 180) &&
+    inRange(input.cargo, 0, 80) &&
+    inRange(input.bikeWeight, 5, 40) &&
+    inRange(input.width, 20, 80) &&
+    inRange(input.frontWidth, 20, 80) &&
+    inRange(input.rearWidth, 20, 80) &&
+    supportedWheels.has(input.wheel) &&
+    optionalInRange(input.rimWidth, 13, 45) &&
+    optionalInRange(input.maxPsi, 20, 180) &&
+    Number.isInteger(input.month) && input.month >= 0 && input.month <= 11 &&
+    Boolean(input.bike && input.tire && input.surface && input.special && DATA.regions[input.regionKey])
   );
 }
 
@@ -1105,8 +1114,11 @@ function computePressure(input) {
   };
 }
 
+
 const $ = id => document.getElementById(id);
 const DOM = {};
+const CALCULATION_COOLDOWN_MS = 300;
+let lastManualCalculationAt = -Infinity;
 
 const IDS = [
   "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
@@ -1209,7 +1221,7 @@ function readInputs() {
 
 function renderStatus(label, warning = false) {
   DOM.status.textContent = label;
-  DOM.status.style.color = warning ? "var(--warning)" : "var(--accent-2)";
+  DOM.status.classList.toggle("warn", warning);
 }
 
 
@@ -1287,6 +1299,13 @@ function calculateAndRender() {
   updateClimateInfo();
 }
 
+function handleCalculateClick() {
+  const now = performance.now();
+  if (now - lastManualCalculationAt < CALCULATION_COOLDOWN_MS) return;
+  lastManualCalculationAt = now;
+  calculateAndRender();
+}
+
 function syncBikeChoice(target) {
   const choice = target.closest(".choice");
   if (!choice) return;
@@ -1302,18 +1321,10 @@ function bindEvents() {
   DOM.manualWidth.addEventListener("input", updateResolvedWidth);
   DOM.region.addEventListener("change", updateClimateInfo);
   DOM.month.addEventListener("change", updateClimateInfo);
-  DOM.calculate.addEventListener("click", calculateAndRender);
+  DOM.calculate.addEventListener("click", handleCalculateClick);
 }
 
-function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
-
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {
-      // 개발/로컬 환경에서는 Service Worker 등록 실패를 앱 동작과 분리합니다.
-    });
-  });
-}
+function registerServiceWorker() {}
 
 function init() {
   cacheDom();
@@ -1322,10 +1333,11 @@ function init() {
   updateClimateInfo();
   bindEvents();
   calculateAndRender();
-  // Service Worker disabled in single-file preview
+  registerServiceWorker();
 }
 
 init();
+
 </script>
 </body>
 </html>

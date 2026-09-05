@@ -3,6 +3,8 @@ import { computePressure, validateInput, climateFor, isFiniteNumber } from "./en
 
 const $ = id => document.getElementById(id);
 const DOM = {};
+const CALCULATION_COOLDOWN_MS = 300;
+let lastManualCalculationAt = -Infinity;
 
 const IDS = [
   "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
@@ -105,7 +107,7 @@ function readInputs() {
 
 function renderStatus(label, warning = false) {
   DOM.status.textContent = label;
-  DOM.status.style.color = warning ? "var(--warning)" : "var(--accent-2)";
+  DOM.status.classList.toggle("warn", warning);
 }
 
 
@@ -183,6 +185,13 @@ function calculateAndRender() {
   updateClimateInfo();
 }
 
+function handleCalculateClick() {
+  const now = performance.now();
+  if (now - lastManualCalculationAt < CALCULATION_COOLDOWN_MS) return;
+  lastManualCalculationAt = now;
+  calculateAndRender();
+}
+
 function syncBikeChoice(target) {
   const choice = target.closest(".choice");
   if (!choice) return;
@@ -198,7 +207,7 @@ function bindEvents() {
   DOM.manualWidth.addEventListener("input", updateResolvedWidth);
   DOM.region.addEventListener("change", updateClimateInfo);
   DOM.month.addEventListener("change", updateClimateInfo);
-  DOM.calculate.addEventListener("click", calculateAndRender);
+  DOM.calculate.addEventListener("click", handleCalculateClick);
 }
 
 function registerServiceWorker() {

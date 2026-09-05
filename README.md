@@ -1,4 +1,4 @@
-# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.2
+# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.3
 
 
 ## 파일 역할
@@ -78,3 +78,14 @@ CST 26×2.10 Wire 조합은 40–65 PSI 참조 범위를 추가로 적용합니�
 - 내부 `hybrid` 키와 압력 보정 계수는 그대로 유지하여 계산 로직 무변경
 - 하단 출처/계산 원칙은 기본적으로 접힌 `참조` details 영역으로 정리
 - Service Worker 캐시 버전을 4.1.2로 갱신
+
+
+## Beta 4.1.3 Security hardening
+- GitHub Pages에서 동작 가능한 `Content-Security-Policy` 메타 정책을 추가하여 외부 스크립트/스타일/프레임/오브젝트 로드를 기본 차단합니다.
+- `Referrer-Policy: no-referrer`를 메타 정책으로 적용합니다.
+- 계산 입력값을 HTML 속성에만 의존하지 않고 계산 엔진에서도 범위/열거값을 다시 검증합니다.
+- 계산 버튼에 300ms 클라이언트 측 연타 제한을 추가하여 매크로성 반복 클릭과 실수 연타를 완화합니다.
+- Service Worker는 동일 출처 GET 요청만 처리하며, 정상(`response.ok`) same-origin 응답만 캐시에 기록합니다.
+- 렌더링은 기존과 같이 `textContent` 중심이며 `eval`, `innerHTML`, `document.write`를 사용하지 않습니다.
+
+> 한계: GitHub Pages의 정적 클라이언트 코드만으로는 DDoS, 서버 측 봇/Rate Limit, 저장소 계정 탈취를 차단할 수 없습니다. 이 버전은 브라우저/캐시/입력 경계를 강화하는 경량 하드닝입니다.

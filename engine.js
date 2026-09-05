@@ -114,14 +114,22 @@ function cst26x210ReferenceBand(input) {
 }
 
 export function validateInput(input) {
-  const required = [input.rider, input.cargo, input.bikeWeight, input.width, input.wheel];
+  const inRange = (value, min, max) => isFiniteNumber(value) && value >= min && value <= max;
+  const optionalInRange = (value, min, max) => !isFiniteNumber(value) || inRange(value, min, max);
+  const supportedWheels = new Set([305, 355, 406, 457, 507, 559, 584, 622]);
 
   return (
-    required.every(isFiniteNumber) &&
-    input.rider > 0 &&
-    input.cargo >= 0 &&
-    input.bikeWeight > 0 &&
-    input.width > 0
+    inRange(input.rider, 20, 180) &&
+    inRange(input.cargo, 0, 80) &&
+    inRange(input.bikeWeight, 5, 40) &&
+    inRange(input.width, 20, 80) &&
+    inRange(input.frontWidth, 20, 80) &&
+    inRange(input.rearWidth, 20, 80) &&
+    supportedWheels.has(input.wheel) &&
+    optionalInRange(input.rimWidth, 13, 45) &&
+    optionalInRange(input.maxPsi, 20, 180) &&
+    Number.isInteger(input.month) && input.month >= 0 && input.month <= 11 &&
+    Boolean(input.bike && input.tire && input.surface && input.special && DATA.regions[input.regionKey])
   );
 }
 

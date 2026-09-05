@@ -88,7 +88,7 @@ export const DATA = Object.freeze({
     gravel:   { name: "GRAVEL",          baseFactor: .96, splitFront: .95, splitRear: 1.05 },
     hardtail: { name: "FRONT SHOCK MTB", baseFactor: .93, splitFront: .94, splitRear: 1.06 },
     fullsus:  { name: "FULL-SUS MTB",    baseFactor: .91, splitFront: .94, splitRear: 1.06 },
-    hybrid:   { name: "HYBRID",          baseFactor: 1.00, splitFront: .96, splitRear: 1.04 }
+    hybrid:   { name: "HYBRID & CITY",   baseFactor: 1.00, splitFront: .96, splitRear: 1.04 }
   },
 
   /*
