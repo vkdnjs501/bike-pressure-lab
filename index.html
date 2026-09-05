@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="영등포 자전거 클린처 타이어 권장 공기압 계산기">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.0.0</title>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <small>YEONGDEUNGPO BIKE PRESSURE LAB</small>
+      <div class="signature">made by. HyunSeock.Son</div>
+      <h1>공기압 계산기</h1>
+      <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
+    </div>
+    <div class="badge">BETA 4.0.0 · OFFLINE HTML</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="head"><h2>SETUP / 계산 조건</h2><span class="kicker">01 INPUT</span></div>
+
+      <div class="section">
+        <div class="section-title"><strong>하중</strong><span>A + B + C</span></div>
+        <div class="fields three-mobile">
+          <div class="field"><label>몸무게 A · kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
+          <div class="field"><label>추가무게 B · kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
+          <div class="field"><label>자전거 C · kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>자전거 타입</strong><span>앞/뒤 압력 분배 보정 포함</span></div>
+        <div class="choice-grid" id="bikeChoices">
+          <label class="choice"><input type="radio" name="bike" value="minivelo"><b>MINI VELO</b><span>미니벨로</span></label>
+          <label class="choice active"><input checked type="radio" name="bike" value="road"><b>ROAD</b><span>로드</span></label>
+          <label class="choice"><input type="radio" name="bike" value="gravel"><b>GRAVEL</b><span>그래블</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hardtail"><b>FRONT SHOCK MTB</b><span>프론트쇽 MTB</span></label>
+          <label class="choice"><input type="radio" name="bike" value="fullsus"><b>FULL-SUS MTB</b><span>풀쇽 MTB</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID</b><span>하이브리드</span></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>휠 & 타이어</strong><span>D는 mm 기준</span></div>
+        <div class="fields two">
+          <div class="field">
+            <label>타이어 직경</label>
+            <select id="wheel">
+              <option value="305">16 inch</option><option value="355">18 inch</option>
+              <option value="406">20 inch</option><option value="457">22 inch</option>
+              <option value="507">24 inch</option><option value="559">26 inch</option>
+              <option value="622">28.5 inch</option><option selected value="622">700C</option>
+              <option value="584">650B</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>타이어 폭 규격 방식</label>
+            <select id="widthStandard">
+              <option selected value="c">C 규격</option>
+              <option value="decimal">소수점 인치 규격</option>
+              <option value="fraction">분수 인치 규격</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fields two mt-10">
+          <div class="field">
+            <label>기본 타이어 폭 D</label>
+            <select id="widthPreset"></select>
+          </div>
+          <div class="field">
+            <label>계산 적용 폭</label>
+            <input id="widthResolved" type="text" value="28.0 mm" readonly>
+          </div>
+        </div>
+
+        <div class="field mt-10">
+          <label>사용 타이어</label>
+          <select id="tire">
+            <option value="cst">1. CST 보급형 · Wire Bead</option>
+            <option value="swallow">2. Swallow 보급형 · Wire Bead</option>
+            <option value="kenda">3. Kenda 보급형 · Wire Bead</option>
+            <option selected value="schwalbeOne">4. Schwalbe One · Folding Bead</option>
+            <option value="marathonRacer">5. Schwalbe Marathon Racer · Folding/Wire 계열</option>
+            <option value="chaoyangMtb">6. Chaoyang 보급형 MTB · Wire Bead</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>노면</strong><span>기본값: 일반도로</span></div>
+        <div class="fields two">
+          <div class="field"><label>노면 상태</label>
+            <select id="surface">
+              <option selected value="normal">일반도로</option>
+              <option value="rough">거친 아스팔트</option>
+              <option value="smooth">매끈한 아스팔트</option>
+              <option value="cycle">자전거도로</option>
+              <option value="gravel">비포장</option>
+              <option value="mountain">산악</option>
+            </select>
+          </div>
+          <div class="field"><label>특수 노면</label>
+            <select id="special">
+              <option selected value="dry">건조</option>
+              <option value="wet">젖은 노면</option>
+              <option value="cold">찬 노면</option>
+              <option value="hot">뜨거운 노면</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>한국 기후 기준</strong><span>KMA · 2025 월평균</span></div>
+        <div class="fields two">
+          <div class="field"><label>지역 기준</label>
+            <select id="region">
+              <option selected value="seoul">서울특별시</option>
+              <option value="busan">부산광역시</option>
+              <option value="daegu">대구광역시</option>
+              <option value="incheon">인천광역시</option>
+              <option value="gwangju">광주광역시</option>
+              <option value="daejeon">대전광역시</option>
+              <option value="ulsan">울산광역시</option>
+              <option value="sejong">세종특별자치시</option>
+              <option value="gyeonggi">경기도</option>
+              <option value="gangwon">강원특별자치도</option>
+              <option value="chungbuk">충청북도</option>
+              <option value="chungnam">충청남도</option>
+              <option value="jeonbuk">전북특별자치도</option>
+              <option value="jeonnam">전라남도</option>
+              <option value="gyeongbuk">경상북도</option>
+              <option value="gyeongnam">경상남도</option>
+              <option value="jeju">제주특별자치도 · 제주시 기준</option>
+            </select>
+          </div>
+          <div class="field"><label>기준 월</label>
+            <select id="month"></select>
+          </div>
+        </div>
+        <div class="note" id="climateInfo"></div>
+      </div>
+
+      <div class="section">
+        <details class="advanced">
+          <summary>고급 설정</summary>
+          <div class="advanced-body">
+            <div class="fields two">
+              <div class="field"><label>실측 기본 타이어 폭 · mm</label><input id="manualWidth" type="number" min="20" max="80" step="0.1" placeholder="미입력 시 일반 규격 사용"></div>
+              <div class="field"><label>앞 타이어 폭 · mm</label><input id="frontWidth" type="number" min="20" max="80" step="0.1" placeholder="기본/실측 폭 사용"></div>
+              <div class="field"><label>뒤 타이어 폭 · mm</label><input id="rearWidth" type="number" min="20" max="80" step="0.1" placeholder="기본/실측 폭 사용"></div>
+              <div class="field"><label>림 내부 폭 · mm</label><input id="rimWidth" type="number" min="13" max="45" step="0.5" placeholder="선택"></div>
+              <div class="field"><label>제조사 MAX PSI</label><input id="maxPsi" type="number" min="20" max="180" step="1" placeholder="타이어 측면값"></div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="section"><button class="calc-btn" id="calculate">권장 공기압 계산</button></div>
+    </div>
+
+    <div class="card result-shell">
+      <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <h3 id="resultTitle">ROAD · 700C · 28 mm</h3>
+            <div class="meta" id="resultMeta">84.0 kg System · 일반도로 · 건조</div>
+          </div>
+          <div class="status" id="status">READY</div>
+        </div>
+
+        <div class="pressures">
+          <div class="pressure">
+            <small>FRONT</small>
+            <div><span class="num" id="frontPsi">—</span><span class="unit">PSI</span></div>
+            <div class="sub" id="frontSub">앞바퀴 권장 공기압</div>
+          </div>
+          <div class="pressure">
+            <small>REAR</small>
+            <div><span class="num" id="rearPsi">—</span><span class="unit">PSI</span></div>
+            <div class="sub" id="rearSub">뒷바퀴 권장 공기압</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-strip">
+        <div class="metric"><b id="tempMetric">—</b><span>기후 기준온도</span></div>
+        <div class="metric"><b id="weightMetric">—</b><span>총 시스템 중량</span></div>
+        <div class="metric"><b id="wheelMetric">—</b><span>휠 직경 보정</span></div>
+        <div class="metric"><b id="thermalMetric">—</b><span>온도 보정</span></div>
+      </div>
+
+      <div class="insight">
+        <h4>PRESSURE ANALYSIS</h4>
+        <div class="insight-box"><strong>추천값 산출 근거</strong><p id="logicText">입력 후 계산 버튼을 누르면 분석 결과가 표시됩니다.</p></div>
+        <div class="insight-box"><strong>REFERENCE BASE</strong><p id="referenceText">공식 기준표에서 계산된 원시 기준값을 표시합니다.</p></div>
+        <div class="insight-box"><strong>제조사 / 허용 범위</strong><p id="safetyText">정확한 모델·사이즈 참조 범위 또는 사용자 MAX PSI를 확인합니다.</p></div>
+
+        <h4 class="mt-17">단위 변환기</h4>
+        <div class="converter">
+          <div class="conv"><b id="convPsi">—</b><span>대표값 PSI</span></div>
+          <div class="conv"><b id="convBar">—</b><span>BAR</span></div>
+          <div class="conv"><b id="convKpa">—</b><span>kPa</span></div>
+        </div>
+        <div class="note">※ 베타 계산기는 클린처(튜브) 전용입니다. 실제 주입 시 타이어/림 제조사 최소·최대 압력과 타이어 측면 표기를 최우선으로 확인하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-copy">
+      BETA 4.0.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+      계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
+    </div>
+</div>
+</div>
+
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

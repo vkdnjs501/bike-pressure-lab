@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="영등포 자전거 클린처 타이어 권장 공기압 계산기">
+    <style>
+:root{
+  --bg:#071018;
+  --panel:#0d1822;
+  --panel-2:#111f2b;
+  --line:#213240;
+  --text:#eef5f8;
+  --muted:#8da0ad;
+  --accent:#9ff21d;
+  --accent-2:#d6ff8c;
+  --warning:#ffc85b;
+  --danger:#ff7272;
+  --radius:22px;
+  --shadow:0 20px 60px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(159,242,29,.08),transparent 28rem),
+    linear-gradient(180deg,#071018 0%,#09131c 100%);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard","Noto Sans KR",sans-serif;
+}
+
+body{min-height:100vh}
+
+.wrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:20px 18px 90px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding:18px 4px 20px;
+}
+
+.brand{min-width:0}
+
+.brand small{
+  display:block;
+  color:var(--accent);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+
+.signature{
+  margin:5px 0 7px;
+  color:#9aaab4;
+  font-family:"Snell Roundhand","Segoe Script","Apple Chancery","Brush Script MT",cursive;
+  font-size:11.5px;
+  font-weight:300;
+  line-height:1;
+  letter-spacing:.012em;
+  opacity:.56;
+}
+
+.brand h1{
+  margin:5px 0;
+  font-size:clamp(26px,5vw,48px);
+  line-height:.95;
+  letter-spacing:-.045em;
+}
+
+.brand p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.badge{
+  flex:0 0 auto;
+  padding:9px 12px;
+  color:#b9c8d1;
+  background:rgba(255,255,255,.025);
+  border:1px solid #31424f;
+  border-radius:999px;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.04fr .96fr;
+  gap:18px;
+}
+
+.card{
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(17,31,43,.96),rgba(11,24,34,.96));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.card .head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px;
+  border-bottom:1px solid var(--line);
+}
+
+.head h2{
+  margin:0;
+  font-size:15px;
+  letter-spacing:-.02em;
+}
+
+.kicker{
+  color:var(--accent);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.15em;
+}
+
+.section{
+  padding:18px 20px;
+  border-bottom:1px solid rgba(33,50,64,.8);
+}
+
+.section:last-child{border-bottom:0}
+
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:13px;
+}
+
+.section-title strong{
+  font-size:12px;
+  letter-spacing:.04em;
+}
+
+.section-title span{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.fields{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.fields.two{grid-template-columns:repeat(2,1fr)}
+
+.field label{
+  display:block;
+  margin:0 0 6px 3px;
+  color:#d7e2e8;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.01em;
+}
+
+input,select{
+  width:100%;
+  padding:13px 12px;
+  color:var(--text);
+  background:#09141d;
+  border:1px solid #2b3e4d;
+  border-radius:14px;
+  outline:none;
+  font-size:14px;
+  appearance:none;
+}
+
+input:focus,select:focus{
+  border-color:#668d33;
+  box-shadow:0 0 0 3px rgba(159,242,29,.08);
+}
+
+input[readonly]{cursor:default}
+
+.choice-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.choice{
+  padding:12px 10px;
+  background:#0a151e;
+  border:1px solid #293c4a;
+  border-radius:14px;
+  cursor:pointer;
+  user-select:none;
+}
+
+.choice input{display:none}
+
+.choice b{
+  display:block;
+  margin-bottom:3px;
+  font-size:12px;
+}
+
+.choice span{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.choice.active{
+  background:linear-gradient(180deg,rgba(159,242,29,.11),rgba(159,242,29,.035));
+  border-color:#7eb930;
+}
+
+.choice.active b{color:var(--accent-2)}
+
+.advanced summary{
+  color:#c6d3da;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:800;
+  list-style:none;
+}
+
+.advanced summary::-webkit-details-marker{display:none}
+.advanced summary::after{content:"＋";float:right;color:var(--accent)}
+.advanced[open] summary::after{content:"—"}
+.advanced-body{padding-top:15px}
+
+.calc-btn{
+  width:100%;
+  padding:16px 18px;
+  color:#081108;
+  background:linear-gradient(120deg,#baff3c,#8ee50f);
+  border:0;
+  border-radius:16px;
+  box-shadow:0 12px 30px rgba(159,242,29,.2);
+  cursor:pointer;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+
+.calc-btn:active{transform:translateY(1px)}
+
+.result-shell{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.hero{
+  padding:24px 22px 18px;
+  background:
+    linear-gradient(145deg,rgba(159,242,29,.12),transparent 36%),
+    linear-gradient(180deg,#111f2b,#0c1720);
+}
+
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+
+.hero h3{
+  margin:4px 0 0;
+  color:#c8d5dc;
+  font-size:13px;
+}
+
+.hero .meta{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.status{
+  padding:7px 9px;
+  color:var(--accent-2);
+  background:rgba(159,242,29,.1);
+  border:1px solid rgba(159,242,29,.3);
+  border-radius:999px;
+  font-size:9px;
+  font-weight:900;
+}
+
+.pressures{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:22px;
+}
+
+.pressure{
+  padding:16px;
+  background:rgba(3,10,15,.44);
+  border:1px solid #263b48;
+  border-radius:18px;
+}
+
+.pressure small{
+  color:#8fa3ae;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+
+.pressure .num{
+  margin-top:9px;
+  font-size:clamp(36px,8vw,60px);
+  font-weight:950;
+  line-height:.9;
+  letter-spacing:-.06em;
+}
+
+.pressure .unit{
+  margin-left:3px;
+  color:var(--accent);
+  font-size:13px;
+  font-weight:900;
+}
+
+.pressure .sub{
+  margin-top:9px;
+  color:#91a4af;
+  font-size:10px;
+}
+
+.metric-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+
+.metric{
+  padding:12px 10px;
+  text-align:center;
+  border-right:1px solid var(--line);
+}
+
+.metric:last-child{border-right:0}
+.metric b{display:block;font-size:12px}
+.metric span{color:var(--muted);font-size:8px}
+
+.insight{padding:18px 20px}
+
+.insight h4{
+  margin:0 0 11px;
+  color:#dce7eb;
+  font-size:11px;
+}
+
+.insight-box{
+  margin-bottom:9px;
+  padding:12px 13px;
+  background:#09141d;
+  border:1px solid #223541;
+  border-radius:15px;
+}
+
+.insight-box strong{font-size:11px}
+
+.insight-box p{
+  margin:5px 0 0;
+  color:#91a5b0;
+  font-size:10px;
+  line-height:1.55;
+}
+
+.converter{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.conv{
+  padding:12px;
+  text-align:center;
+  background:#09141d;
+  border:1px solid #223541;
+  border-radius:14px;
+}
+
+.conv b{display:block;font-size:16px}
+.conv span{color:var(--muted);font-size:8px}
+
+.note{
+  margin-top:10px;
+  color:#718794;
+  font-size:9px;
+  line-height:1.55;
+}
+
+.footer{
+  padding:18px 2px 12px;
+  color:#586d79;
+  font-size:9px;
+  line-height:1.55;
+}
+
+.footer-copy{max-width:900px}
+.warn{color:var(--warning)!important}
+.mt-10{margin-top:10px}
+.mt-17{margin-top:17px}
+
+@media(max-width:860px){
+  .grid{grid-template-columns:1fr}
+  .result-shell{min-height:auto}
+  .topbar{align-items:center}
+}
+
+@media(max-width:560px){
+  .wrap{padding:10px 10px 70px}
+  .topbar{padding:12px 4px 15px}
+  .badge{display:none}
+  .signature{margin:4px 0 6px;font-size:10.5px;opacity:.54}
+  .card{border-radius:18px}
+  .section{padding:16px 14px}
+  .card .head{padding:15px 14px}
+  .fields,.fields.two{grid-template-columns:1fr 1fr}
+  .fields.three-mobile{grid-template-columns:repeat(3,1fr)}
+  .choice-grid{grid-template-columns:1fr 1fr}
+  .hero{padding:20px 14px 15px}
+  .metric-strip{grid-template-columns:1fr 1fr}
+  .metric:nth-child(2){border-right:0}
+  .metric:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .insight{padding:15px 14px}
+}
+
+</style>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.0.0 Preview</title>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <small>YEONGDEUNGPO BIKE PRESSURE LAB</small>
+      <div class="signature">made by. HyunSeock.Son</div>
+      <h1>공기압 계산기</h1>
+      <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
+    </div>
+    <div class="badge">BETA 4.0.0 PREVIEW · OFFLINE HTML</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="head"><h2>SETUP / 계산 조건</h2><span class="kicker">01 INPUT</span></div>
+
+      <div class="section">
+        <div class="section-title"><strong>하중</strong><span>A + B + C</span></div>
+        <div class="fields three-mobile">
+          <div class="field"><label>몸무게 A · kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
+          <div class="field"><label>추가무게 B · kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
+          <div class="field"><label>자전거 C · kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>자전거 타입</strong><span>앞/뒤 압력 분배 보정 포함</span></div>
+        <div class="choice-grid" id="bikeChoices">
+          <label class="choice"><input type="radio" name="bike" value="minivelo"><b>MINI VELO</b><span>미니벨로</span></label>
+          <label class="choice active"><input checked type="radio" name="bike" value="road"><b>ROAD</b><span>로드</span></label>
+          <label class="choice"><input type="radio" name="bike" value="gravel"><b>GRAVEL</b><span>그래블</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hardtail"><b>FRONT SHOCK MTB</b><span>프론트쇽 MTB</span></label>
+          <label class="choice"><input type="radio" name="bike" value="fullsus"><b>FULL-SUS MTB</b><span>풀쇽 MTB</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID</b><span>하이브리드</span></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>휠 & 타이어</strong><span>D는 mm 기준</span></div>
+        <div class="fields two">
+          <div class="field">
+            <label>타이어 직경</label>
+            <select id="wheel">
+              <option value="305">16 inch</option><option value="355">18 inch</option>
+              <option value="406">20 inch</option><option value="457">22 inch</option>
+              <option value="507">24 inch</option><option value="559">26 inch</option>
+              <option value="622">28.5 inch</option><option selected value="622">700C</option>
+              <option value="584">650B</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>타이어 폭 규격 방식</label>
+            <select id="widthStandard">
+              <option selected value="c">C 규격</option>
+              <option value="decimal">소수점 인치 규격</option>
+              <option value="fraction">분수 인치 규격</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fields two mt-10">
+          <div class="field">
+            <label>기본 타이어 폭 D</label>
+            <select id="widthPreset"></select>
+          </div>
+          <div class="field">
+            <label>계산 적용 폭</label>
+            <input id="widthResolved" type="text" value="28.0 mm" readonly>
+          </div>
+        </div>
+
+        <div class="field mt-10">
+          <label>사용 타이어</label>
+          <select id="tire">
+            <option value="cst">1. CST 보급형 · Wire Bead</option>
+            <option value="swallow">2. Swallow 보급형 · Wire Bead</option>
+            <option value="kenda">3. Kenda 보급형 · Wire Bead</option>
+            <option selected value="schwalbeOne">4. Schwalbe One · Folding Bead</option>
+            <option value="marathonRacer">5. Schwalbe Marathon Racer · Folding/Wire 계열</option>
+            <option value="chaoyangMtb">6. Chaoyang 보급형 MTB · Wire Bead</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>노면</strong><span>기본값: 일반도로</span></div>
+        <div class="fields two">
+          <div class="field"><label>노면 상태</label>
+            <select id="surface">
+              <option selected value="normal">일반도로</option>
+              <option value="rough">거친 아스팔트</option>
+              <option value="smooth">매끈한 아스팔트</option>
+              <option value="cycle">자전거도로</option>
+              <option value="gravel">비포장</option>
+              <option value="mountain">산악</option>
+            </select>
+          </div>
+          <div class="field"><label>특수 노면</label>
+            <select id="special">
+              <option selected value="dry">건조</option>
+              <option value="wet">젖은 노면</option>
+              <option value="cold">찬 노면</option>
+              <option value="hot">뜨거운 노면</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><strong>한국 기후 기준</strong><span>KMA · 2025 월평균</span></div>
+        <div class="fields two">
+          <div class="field"><label>지역 기준</label>
+            <select id="region">
+              <option selected value="seoul">서울특별시</option>
+              <option value="busan">부산광역시</option>
+              <option value="daegu">대구광역시</option>
+              <option value="incheon">인천광역시</option>
+              <option value="gwangju">광주광역시</option>
+              <option value="daejeon">대전광역시</option>
+              <option value="ulsan">울산광역시</option>
+              <option value="sejong">세종특별자치시</option>
+              <option value="gyeonggi">경기도</option>
+              <option value="gangwon">강원특별자치도</option>
+              <option value="chungbuk">충청북도</option>
+              <option value="chungnam">충청남도</option>
+              <option value="jeonbuk">전북특별자치도</option>
+              <option value="jeonnam">전라남도</option>
+              <option value="gyeongbuk">경상북도</option>
+              <option value="gyeongnam">경상남도</option>
+              <option value="jeju">제주특별자치도 · 제주시 기준</option>
+            </select>
+          </div>
+          <div class="field"><label>기준 월</label>
+            <select id="month"></select>
+          </div>
+        </div>
+        <div class="note" id="climateInfo"></div>
+      </div>
+
+      <div class="section">
+        <details class="advanced">
+          <summary>고급 설정</summary>
+          <div class="advanced-body">
+            <div class="fields two">
+              <div class="field"><label>실측 기본 타이어 폭 · mm</label><input id="manualWidth" type="number" min="20" max="80" step="0.1" placeholder="미입력 시 일반 규격 사용"></div>
+              <div class="field"><label>앞 타이어 폭 · mm</label><input id="frontWidth" type="number" min="20" max="80" step="0.1" placeholder="기본/실측 폭 사용"></div>
+              <div class="field"><label>뒤 타이어 폭 · mm</label><input id="rearWidth" type="number" min="20" max="80" step="0.1" placeholder="기본/실측 폭 사용"></div>
+              <div class="field"><label>림 내부 폭 · mm</label><input id="rimWidth" type="number" min="13" max="45" step="0.5" placeholder="선택"></div>
+              <div class="field"><label>제조사 MAX PSI</label><input id="maxPsi" type="number" min="20" max="180" step="1" placeholder="타이어 측면값"></div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="section"><button class="calc-btn" id="calculate">권장 공기압 계산</button></div>
+    </div>
+
+    <div class="card result-shell">
+      <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <h3 id="resultTitle">ROAD · 700C · 28 mm</h3>
+            <div class="meta" id="resultMeta">84.0 kg System · 일반도로 · 건조</div>
+          </div>
+          <div class="status" id="status">READY</div>
+        </div>
+
+        <div class="pressures">
+          <div class="pressure">
+            <small>FRONT</small>
+            <div><span class="num" id="frontPsi">—</span><span class="unit">PSI</span></div>
+            <div class="sub" id="frontSub">앞바퀴 권장 공기압</div>
+          </div>
+          <div class="pressure">
+            <small>REAR</small>
+            <div><span class="num" id="rearPsi">—</span><span class="unit">PSI</span></div>
+            <div class="sub" id="rearSub">뒷바퀴 권장 공기압</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-strip">
+        <div class="metric"><b id="tempMetric">—</b><span>기후 기준온도</span></div>
+        <div class="metric"><b id="weightMetric">—</b><span>총 시스템 중량</span></div>
+        <div class="metric"><b id="wheelMetric">—</b><span>휠 직경 보정</span></div>
+        <div class="metric"><b id="thermalMetric">—</b><span>온도 보정</span></div>
+      </div>
+
+      <div class="insight">
+        <h4>PRESSURE ANALYSIS</h4>
+        <div class="insight-box"><strong>추천값 산출 근거</strong><p id="logicText">입력 후 계산 버튼을 누르면 분석 결과가 표시됩니다.</p></div>
+        <div class="insight-box"><strong>REFERENCE BASE</strong><p id="referenceText">공식 기준표에서 계산된 원시 기준값을 표시합니다.</p></div>
+        <div class="insight-box"><strong>제조사 / 허용 범위</strong><p id="safetyText">정확한 모델·사이즈 참조 범위 또는 사용자 MAX PSI를 확인합니다.</p></div>
+
+        <h4 class="mt-17">단위 변환기</h4>
+        <div class="converter">
+          <div class="conv"><b id="convPsi">—</b><span>대표값 PSI</span></div>
+          <div class="conv"><b id="convBar">—</b><span>BAR</span></div>
+          <div class="conv"><b id="convKpa">—</b><span>kPa</span></div>
+        </div>
+        <div class="note">※ 베타 계산기는 클린처(튜브) 전용입니다. 실제 주입 시 타이어/림 제조사 최소·최대 압력과 타이어 측면 표기를 최우선으로 확인하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-copy">
+      BETA 4.0.0 PREVIEW · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+      계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
+    </div>
+</div>
+</div>
+
+
+  <script>
+const CONSTANTS = Object.freeze({
+  PSI_TO_BAR: 0.0689476,
+  PSI_TO_KPA: 6.89476,
+  BAR_TO_PSI: 14.5037738,
+  ATM_PSI: 14.6959,
+  KELVIN_OFFSET: 273.15,
+  REFERENCE_TEMP_C: 20
+});
+
+/*
+  PRESSURE GUIDE MODEL v2
+  -----------------------
+  Base guide is derived from Schwalbe's published general pressure table:
+  tire width × rider/load reference (60 / 85 / 110 kg).
+
+  We use total system weight as a conservative load proxy because this app
+  explicitly collects rider + cargo + bicycle weight.
+
+  The table is stored in bar and interpolated bilinearly in engine.js.
+*/
+const PRESSURE_GUIDE = Object.freeze({
+  weightsKg: [60, 85, 110],
+  widthsMm: [25, 28, 32, 37, 40, 47, 50, 55, 60],
+  bar: {
+    25: [6.0, 7.0, 8.0],
+    28: [5.5, 6.5, 7.5],
+    32: [4.5, 5.5, 6.5],
+    37: [4.0, 5.0, 6.0],
+    40: [3.5, 4.5, 6.0],
+    47: [3.0, 4.0, 5.0],
+    50: [2.5, 4.0, 5.0],
+    55: [2.0, 3.0, 4.0],
+    60: [2.0, 3.0, 4.0]
+  }
+});
+
+const DATA = Object.freeze({
+  climate2025: {
+    nationwide: [-0.2,-0.5,7.6,13.1,16.8,22.9,27.1,27.1,23.0,16.6,8.5,2.4],
+
+    /*
+      Compact KMA-based regional climate profiles.
+      The UI exposes 17 first-level administrative areas, while internally
+      several areas share one broad KMA climate profile to keep the app light.
+    */
+    profiles: {
+      capital:   [-1.0,-0.8,7.1,13.5,17.4,23.4,27.4,27.2,22.8,15.8,7.6,1.3],
+      gangwon:   [-2.3,-2.0,5.6,11.6,15.7,21.4,25.2,25.3,20.8,13.7,5.6,-0.5],
+      chungbuk:  [-1.7,-1.6,6.6,12.8,16.7,22.8,26.8,26.8,22.3,15.3,6.8,0.4],
+      chungnam:  [-0.9,-1.1,6.8,12.8,16.7,22.7,26.7,26.7,22.4,15.6,7.4,1.1],
+      jeonbuk:   [0.0,-0.5,7.1,13.0,16.8,22.8,26.9,26.9,22.8,16.1,8.1,2.0],
+      jeonnam:   [1.8,1.2,8.6,14.1,17.7,23.2,27.1,27.4,23.7,17.4,10.0,4.2],
+      gyeongbuk: [0.1,-0.4,7.9,13.8,17.6,23.7,27.7,27.6,23.2,16.4,8.1,1.8],
+      gyeongnam: [2.2,1.5,9.1,14.6,18.0,23.5,27.2,27.5,23.8,17.7,10.4,4.7],
+      jeju:      [7.1,6.4,11.2,15.6,18.4,23.2,27.5,28.1,24.8,19.3,13.8,8.6]
+    }
+  },
+
+  regions: {
+    seoul:     { profile:"capital",   label:"서울특별시", default:true },
+    busan:     { profile:"gyeongnam", label:"부산광역시" },
+    daegu:     { profile:"gyeongbuk", label:"대구광역시" },
+    incheon:   { profile:"capital",   label:"인천광역시" },
+    gwangju:   { profile:"jeonnam",   label:"광주광역시" },
+    daejeon:   { profile:"chungnam",  label:"대전광역시" },
+    ulsan:     { profile:"gyeongnam", label:"울산광역시" },
+    sejong:    { profile:"chungnam",  label:"세종특별자치시" },
+    gyeonggi:  { profile:"capital",   label:"경기도" },
+    gangwon:   { profile:"gangwon",   label:"강원특별자치도" },
+    chungbuk:  { profile:"chungbuk",  label:"충청북도" },
+    chungnam:  { profile:"chungnam",  label:"충청남도" },
+    jeonbuk:   { profile:"jeonbuk",   label:"전북특별자치도" },
+    jeonnam:   { profile:"jeonnam",   label:"전라남도" },
+    gyeongbuk: { profile:"gyeongbuk", label:"경상북도" },
+    gyeongnam: { profile:"gyeongnam", label:"경상남도" },
+    jeju:      { profile:"jeju",      label:"제주특별자치도 · 제주시 기준" }
+  },
+
+  /*
+    splitFront / splitRear:
+    small front-rear recommendation separation.
+    This replaces the older near-linear axle-load multiplier that created
+    unrealistically large front/rear gaps.
+  */
+  bikes: {
+    minivelo: { name: "MINI VELO",       baseFactor: 1.03, splitFront: .95, splitRear: 1.05 },
+    road:     { name: "ROAD",            baseFactor: 1.00, splitFront: .96, splitRear: 1.04 },
+    gravel:   { name: "GRAVEL",          baseFactor: .96, splitFront: .95, splitRear: 1.05 },
+    hardtail: { name: "FRONT SHOCK MTB", baseFactor: .93, splitFront: .94, splitRear: 1.06 },
+    fullsus:  { name: "FULL-SUS MTB",    baseFactor: .91, splitFront: .94, splitRear: 1.06 },
+    hybrid:   { name: "HYBRID",          baseFactor: 1.00, splitFront: .96, splitRear: 1.04 }
+  },
+
+  /*
+    Brand/model selection now only applies a very small casing-style correction.
+    We no longer use large arbitrary brand pressure factors.
+  */
+  tires: {
+    cst:           { factor: 1.00, label: "CST 보급형 · Wire", casing: "wire" },
+    swallow:       { factor: 1.00, label: "Swallow 보급형 · Wire", casing: "wire" },
+    kenda:         { factor: 1.00, label: "Kenda 보급형 · Wire", casing: "wire" },
+    schwalbeOne:   { factor: .99,  label: "Schwalbe One · Folding", casing: "folding" },
+    marathonRacer: { factor: .99,  label: "Marathon Racer", casing: "folding" },
+    chaoyangMtb:   { factor: 1.00, label: "Chaoyang MTB · Wire", casing: "wire" }
+  },
+
+  surfaces: {
+    normal:   { factor: 1.00, label: "일반도로" },
+    rough:    { factor: .96,  label: "거친 아스팔트" },
+    smooth:   { factor: 1.02, label: "매끈한 아스팔트" },
+    cycle:    { factor: .99,  label: "자전거도로" },
+    gravel:   { factor: .91,  label: "비포장" },
+    mountain: { factor: .86,  label: "산악" }
+  },
+
+  specials: {
+    dry:  { factor: 1.00, tempDelta:  0, label: "건조" },
+    wet:  { factor: .97,  tempDelta: -1, label: "젖은 노면" },
+    cold: { factor: .98,  tempDelta: -3, label: "찬 노면" },
+    hot:  { factor: .99,  tempDelta:  8, label: "뜨거운 노면" }
+  },
+
+  widths: {
+    c: [
+      ["23C",23],["25C",25],["28C",28],["32C",32],["35C",35],["38C",38],["40C",40]
+    ],
+    decimal: [
+      ['1.125"',1.125*25.4],['1.50"',1.50*25.4],['1.75"',1.75*25.4],
+      ['1.95"',1.95*25.4],['2.10"',2.10*25.4],['2.20"',2.20*25.4],
+      ['2.25"',2.25*25.4],['2.40"',2.40*25.4],['2.50"',2.50*25.4]
+    ],
+    fraction: [
+      ['1-1/8"',(1+1/8)*25.4],['1-1/4"',(1+1/4)*25.4],['1-3/8"',(1+3/8)*25.4]
+    ]
+  }
+});
+
+
+const {
+  PSI_TO_BAR,
+  PSI_TO_KPA,
+  BAR_TO_PSI,
+  ATM_PSI,
+  KELVIN_OFFSET,
+  REFERENCE_TEMP_C
+} = CONSTANTS;
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const isFiniteNumber = value => Number.isFinite(value);
+const roundHalf = value => Math.round(value * 2) / 2;
+
+function interpolateLinear(x, xs, ys) {
+  if (xs.length !== ys.length || xs.length < 2) {
+    throw new Error("Invalid interpolation table");
+  }
+
+  if (x <= xs[0]) return ys[0];
+  if (x >= xs[xs.length - 1]) return ys[ys.length - 1];
+
+  for (let i = 0; i < xs.length - 1; i++) {
+    if (x >= xs[i] && x <= xs[i + 1]) {
+      const ratio = (x - xs[i]) / (xs[i + 1] - xs[i]);
+      return ys[i] + (ys[i + 1] - ys[i]) * ratio;
+    }
+  }
+
+  return ys[ys.length - 1];
+}
+
+/*
+  Interpolates Schwalbe's published width × load guide.
+
+  Width and weight outside the published table are not freely extrapolated.
+  We clamp to the nearest published edge, then apply only a mild extension
+  factor. This prevents the old model's extreme pressure collapse at 2"+ widths.
+*/
+function guidePressureBar(widthMm, totalWeightKg) {
+  const widths = PRESSURE_GUIDE.widthsMm;
+  const weights = PRESSURE_GUIDE.weightsKg;
+
+  const clampedWidth = clamp(widthMm, widths[0], widths[widths.length - 1]);
+  const clampedWeight = clamp(totalWeightKg, weights[0], weights[weights.length - 1]);
+
+  const pressureAtEachWidth = widths.map(width =>
+    interpolateLinear(clampedWeight, weights, PRESSURE_GUIDE.bar[width])
+  );
+
+  let pressureBar = interpolateLinear(clampedWidth, widths, pressureAtEachWidth);
+
+  // Mild extension only outside source table.
+  if (widthMm < widths[0]) {
+    pressureBar *= Math.pow(widths[0] / widthMm, 0.45);
+  } else if (widthMm > widths[widths.length - 1]) {
+    pressureBar *= Math.pow(widths[widths.length - 1] / widthMm, 0.45);
+  }
+
+  if (totalWeightKg < weights[0]) {
+    pressureBar *= Math.pow(totalWeightKg / weights[0], 0.55);
+  } else if (totalWeightKg > weights[weights.length - 1]) {
+    pressureBar *= Math.pow(totalWeightKg / weights[weights.length - 1], 0.55);
+  }
+
+  return pressureBar;
+}
+
+function climateFor(regionKey, monthIndex) {
+  const region = DATA.regions[regionKey] ?? DATA.regions.seoul;
+  const profile = DATA.climate2025.profiles[region.profile] ?? DATA.climate2025.profiles.capital;
+  return profile[monthIndex];
+}
+
+function thermalCorrect(gaugePsi, rideTempC) {
+  const absolutePressure = gaugePsi + ATM_PSI;
+  const correctedAbsolute =
+    absolutePressure *
+    ((rideTempC + KELVIN_OFFSET) / (REFERENCE_TEMP_C + KELVIN_OFFSET));
+
+  return Math.max(0, correctedAbsolute - ATM_PSI);
+}
+
+function diameterCorrection(wheelBsd) {
+  // Schwalbe notes that smaller-diameter wheels require higher pressure.
+  // Keep this intentionally mild; width/load remain the dominant variables.
+  return clamp(Math.pow(622 / wheelBsd, 0.08), 0.97, 1.08);
+}
+
+function rimCorrection(widthMm, rimWidth) {
+  if (!isFiniteNumber(rimWidth)) return 1;
+
+  const nominal = Math.max(15, widthMm * 0.55);
+  const delta = clamp((rimWidth - nominal) / nominal, -0.25, 0.25);
+  return 1 - delta * 0.06;
+}
+
+function cst26x210ReferenceBand(input) {
+  const isCstWire = input.tireKey === "cst";
+  const is26 = input.wheel >= 550 && input.wheel <= 565;
+  const widths = [input.frontWidth, input.rearWidth];
+  const is210 = widths.every(width => width >= 51 && width <= 57);
+
+  if (isCstWire && is26 && is210) {
+    return {
+      minPsi: 40,
+      maxPsi: 65,
+      label: "CST 26×2.10 Wire reference"
+    };
+  }
+
+  return null;
+}
+
+function validateInput(input) {
+  const required = [input.rider, input.cargo, input.bikeWeight, input.width, input.wheel];
+
+  return (
+    required.every(isFiniteNumber) &&
+    input.rider > 0 &&
+    input.cargo >= 0 &&
+    input.bikeWeight > 0 &&
+    input.width > 0
+  );
+}
+
+function computePressure(input) {
+  const totalWeight = input.rider + input.cargo + input.bikeWeight;
+  const climate = climateFor(input.regionKey, input.month);
+  const rideTemp = climate + input.special.tempDelta;
+  const wheelFactor = diameterCorrection(input.wheel);
+
+  const frontGuidePsi = guidePressureBar(input.frontWidth, totalWeight) * BAR_TO_PSI;
+  const rearGuidePsi = guidePressureBar(input.rearWidth, totalWeight) * BAR_TO_PSI;
+
+  let frontBase =
+    frontGuidePsi *
+    input.bike.baseFactor *
+    input.bike.splitFront *
+    input.tire.factor *
+    input.surface.factor *
+    input.special.factor *
+    wheelFactor *
+    rimCorrection(input.frontWidth, input.rimWidth);
+
+  let rearBase =
+    rearGuidePsi *
+    input.bike.baseFactor *
+    input.bike.splitRear *
+    input.tire.factor *
+    input.surface.factor *
+    input.special.factor *
+    wheelFactor *
+    rimCorrection(input.rearWidth, input.rimWidth);
+
+  let front = thermalCorrect(frontBase, rideTemp);
+  let rear = thermalCorrect(rearBase, rideTemp);
+
+  const referenceBand = cst26x210ReferenceBand(input);
+
+  // Apply known/reference operating floor only when we have a matching reference.
+  if (referenceBand) {
+    front = Math.max(front, referenceBand.minPsi);
+    rear = Math.max(rear, referenceBand.minPsi);
+  }
+
+  let limited = false;
+  let appliedMaxPsi = null;
+
+  // User-entered manufacturer limit has highest priority.
+  if (isFiniteNumber(input.maxPsi) && input.maxPsi > 0) {
+    appliedMaxPsi = input.maxPsi;
+  } else if (referenceBand) {
+    appliedMaxPsi = referenceBand.maxPsi;
+  }
+
+  if (isFiniteNumber(appliedMaxPsi)) {
+    if (front > appliedMaxPsi) { front = appliedMaxPsi; limited = true; }
+    if (rear > appliedMaxPsi) { rear = appliedMaxPsi; limited = true; }
+  }
+
+  front = roundHalf(front);
+  rear = roundHalf(rear);
+
+  const rawAverage = (frontBase + rearBase) / 2;
+  const finalAverage = (front + rear) / 2;
+
+  return {
+    totalWeight,
+    climate,
+    rideTemp,
+    front,
+    rear,
+    limited,
+    appliedMaxPsi,
+    referenceBand,
+    sourceGuide: {
+      frontPsi: frontGuidePsi,
+      rearPsi: rearGuidePsi,
+      frontBar: frontGuidePsi / BAR_TO_PSI,
+      rearBar: rearGuidePsi / BAR_TO_PSI,
+      source: "Schwalbe general tire pressure guide",
+      method: "width × load interpolation"
+    },
+    correctedBase: {
+      frontPsi: frontBase,
+      rearPsi: rearBase
+    },
+    representative: finalAverage,
+    splitPct: front > 0 ? ((rear / front) - 1) * 100 : 0,
+    diameterFactor: wheelFactor,
+    thermalDelta: finalAverage - rawAverage,
+    model: "Schwalbe load-width interpolation v2",
+    conversions: {
+      frontBar: front * PSI_TO_BAR,
+      rearBar: rear * PSI_TO_BAR,
+      frontKpa: front * PSI_TO_KPA,
+      rearKpa: rear * PSI_TO_KPA,
+      representativeBar: finalAverage * PSI_TO_BAR,
+      representativeKpa: finalAverage * PSI_TO_KPA
+    }
+  };
+}
+
+
+
+const $ = id => document.getElementById(id);
+const DOM = {};
+
+const IDS = [
+  "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
+  "tire","surface","special","region","month","climateInfo",
+  "manualWidth","frontWidth","rearWidth","rimWidth","maxPsi","calculate","resultTitle",
+  "resultMeta","status","frontPsi","rearPsi","frontSub","rearSub","tempMetric",
+  "weightMetric","wheelMetric","thermalMetric","logicText","referenceText","safetyText",
+  "convPsi","convBar","convKpa","bikeChoices"
+];
+
+function cacheDom() {
+  IDS.forEach(id => DOM[id] = $(id));
+  DOM.bikeRadios = [...document.querySelectorAll('input[name="bike"]')];
+}
+
+function number(el) {
+  return Number.parseFloat(el.value);
+}
+
+function selectedBikeKey() {
+  return DOM.bikeRadios.find(radio => radio.checked)?.value ?? "road";
+}
+
+function createOption(value, label, selected = false) {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = label;
+  option.selected = selected;
+  return option;
+}
+
+function setupMonths() {
+  const currentMonth = new Date().getMonth();
+  DOM.month.replaceChildren(
+    ...Array.from({ length: 12 }, (_, index) =>
+      createOption(index, `${index + 1}월`, index === currentMonth)
+    )
+  );
+}
+
+function populateWidthPresets() {
+  const standard = DOM.widthStandard.value;
+  const items = DATA.widths[standard] ?? DATA.widths.c;
+
+  DOM.widthPreset.replaceChildren(
+    ...items.map(([label, mm], index) =>
+      createOption(mm.toFixed(4), label, standard === "c" ? label === "28C" : index === 0)
+    )
+  );
+
+  updateResolvedWidth();
+}
+
+function baseWidthMm() {
+  const manual = number(DOM.manualWidth);
+  return isFiniteNumber(manual) && manual > 0 ? manual : number(DOM.widthPreset);
+}
+
+function updateResolvedWidth() {
+  const width = baseWidthMm();
+  DOM.widthResolved.value = isFiniteNumber(width) ? `${width.toFixed(1)} mm` : "—";
+}
+
+function updateClimateInfo() {
+  const monthIndex = Number(DOM.month.value);
+  const regionKey = DOM.region.value;
+  const region = DATA.regions[regionKey] ?? DATA.regions.seoul;
+  const temp = climateFor(regionKey, monthIndex);
+
+  DOM.climateInfo.textContent =
+    `${region.label} · 2025년 ${monthIndex + 1}월 기후기준 ${temp.toFixed(1)}℃ · ` +
+    `KMA 광역 기후 프로필 연동`;
+}
+
+function readInputs() {
+  const bikeKey = selectedBikeKey();
+  const width = baseWidthMm();
+
+  return {
+    rider: number(DOM.rider),
+    cargo: number(DOM.cargo),
+    bikeWeight: number(DOM.bikeWeight),
+    width,
+    wheel: number(DOM.wheel),
+    wheelLabel: DOM.wheel.selectedOptions[0]?.textContent ?? "",
+    bikeKey,
+    bike: DATA.bikes[bikeKey],
+    tireKey: DOM.tire.value,
+    tire: DATA.tires[DOM.tire.value],
+    surface: DATA.surfaces[DOM.surface.value],
+    special: DATA.specials[DOM.special.value],
+    regionKey: DOM.region.value,
+    month: Number(DOM.month.value),
+    frontWidth: isFiniteNumber(number(DOM.frontWidth)) ? number(DOM.frontWidth) : width,
+    rearWidth: isFiniteNumber(number(DOM.rearWidth)) ? number(DOM.rearWidth) : width,
+    rimWidth: number(DOM.rimWidth),
+    maxPsi: number(DOM.maxPsi)
+  };
+}
+
+function renderStatus(label, warning = false) {
+  DOM.status.textContent = label;
+  DOM.status.style.color = warning ? "var(--warning)" : "var(--accent-2)";
+}
+
+
+function renderResult(input, result) {
+  DOM.frontPsi.textContent = result.front.toFixed(1);
+  DOM.rearPsi.textContent = result.rear.toFixed(1);
+
+  DOM.resultTitle.textContent =
+    `${input.bike.name} · ${input.wheelLabel} · ` +
+    `${input.frontWidth === input.rearWidth ? input.frontWidth : `${input.frontWidth}/${input.rearWidth}`} mm`;
+
+  DOM.resultMeta.textContent =
+    `${result.totalWeight.toFixed(1)} kg System · ${input.surface.label} · ` +
+    `${input.special.label} · Rear +${result.splitPct.toFixed(1)}%`;
+
+  DOM.tempMetric.textContent = `${result.climate.toFixed(1)}℃`;
+  DOM.weightMetric.textContent = `${result.totalWeight.toFixed(1)}kg`;
+  DOM.wheelMetric.textContent = `×${result.diameterFactor.toFixed(3)}`;
+  DOM.thermalMetric.textContent = `${result.thermalDelta.toFixed(1)} PSI`;
+
+  DOM.logicText.textContent =
+    `공식 기준표 → 보정 → 온도 → 허용범위 순서로 계산합니다. ` +
+    `${result.model}에서 총중량 ${result.totalWeight.toFixed(1)} kg과 ` +
+    `앞/뒤 폭 ${input.frontWidth}/${input.rearWidth} mm를 먼저 보간하고, ` +
+    `${input.wheelLabel}, ${input.bike.name}, ${input.tire.label}, ${input.surface.label}를 ` +
+    `완만하게 보정한 뒤 ${result.rideTemp.toFixed(1)}℃ 조건으로 온도 보정합니다.`;
+
+  const guideFront = result.sourceGuide.frontPsi.toFixed(1);
+  const guideRear = result.sourceGuide.rearPsi.toFixed(1);
+  const correctedFront = result.correctedBase.frontPsi.toFixed(1);
+  const correctedRear = result.correctedBase.rearPsi.toFixed(1);
+
+  DOM.referenceText.textContent =
+    `Schwalbe 폭×하중 기준표 보간값: 앞 ${guideFront} / 뒤 ${guideRear} PSI. ` +
+    `휠·차종·타이어·노면 보정 후 온도보정 직전 값은 ` +
+    `앞 ${correctedFront} / 뒤 ${correctedRear} PSI입니다.`;
+
+  DOM.safetyText.classList.toggle("warn", result.limited);
+
+  if (result.limited) {
+    DOM.safetyText.textContent =
+      `적용 MAX ${result.appliedMaxPsi.toFixed(0)} PSI를 초과한 계산값을 안전상한으로 제한했습니다.`;
+    renderStatus("MAX LIMITED", true);
+  } else if (result.referenceBand && !isFiniteNumber(input.maxPsi)) {
+    DOM.safetyText.textContent =
+      `${result.referenceBand.label}: ${result.referenceBand.minPsi}–${result.referenceBand.maxPsi} PSI 참조 범위가 적용되었습니다. ` +
+      `실제 타이어 측면 표기가 있으면 그 값을 최우선으로 사용하세요.`;
+    renderStatus("CALCULATED");
+  } else {
+    DOM.safetyText.textContent = isFiniteNumber(input.maxPsi)
+      ? `제조사 MAX ${input.maxPsi.toFixed(0)} PSI 이내입니다.`
+      : "정확한 모델·사이즈별 자동 참조 범위가 없는 조합입니다. 실제 타이어 측면의 MIN/MAX PSI를 확인하고, 고급 설정의 제조사 MAX PSI에 입력하세요.";
+    renderStatus("CALCULATED");
+  }
+
+  DOM.convPsi.textContent = result.representative.toFixed(1);
+  DOM.convBar.textContent = result.conversions.representativeBar.toFixed(2);
+  DOM.convKpa.textContent = Math.round(result.conversions.representativeKpa);
+
+  DOM.frontSub.textContent =
+    `${result.conversions.frontBar.toFixed(2)} bar · ${Math.round(result.conversions.frontKpa)} kPa`;
+  DOM.rearSub.textContent =
+    `${result.conversions.rearBar.toFixed(2)} bar · ${Math.round(result.conversions.rearKpa)} kPa`;
+}
+
+function calculateAndRender() {
+  const input = readInputs();
+
+  if (!validateInput(input)) {
+    renderStatus("CHECK INPUT", true);
+    return;
+  }
+
+  renderResult(input, computePressure(input));
+  updateClimateInfo();
+}
+
+function syncBikeChoice(target) {
+  const choice = target.closest(".choice");
+  if (!choice) return;
+  DOM.bikeChoices.querySelectorAll(".choice").forEach(element =>
+    element.classList.toggle("active", element === choice)
+  );
+}
+
+function bindEvents() {
+  DOM.bikeChoices.addEventListener("click", event => syncBikeChoice(event.target));
+  DOM.widthStandard.addEventListener("change", populateWidthPresets);
+  DOM.widthPreset.addEventListener("change", updateResolvedWidth);
+  DOM.manualWidth.addEventListener("input", updateResolvedWidth);
+  DOM.region.addEventListener("change", updateClimateInfo);
+  DOM.month.addEventListener("change", updateClimateInfo);
+  DOM.calculate.addEventListener("click", calculateAndRender);
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      // 개발/로컬 환경에서는 Service Worker 등록 실패를 앱 동작과 분리합니다.
+    });
+  });
+}
+
+function init() {
+  cacheDom();
+  setupMonths();
+  populateWidthPresets();
+  updateClimateInfo();
+  bindEvents();
+  calculateAndRender();
+  // Service Worker disabled in single-file preview
+}
+
+init();
+
+</script>
+</body>
+</html>

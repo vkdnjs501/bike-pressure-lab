@@ -1,0 +1,12 @@
+{
+  "name": "YEONGDEUNGPO BIKE PRESSURE LAB",
+  "short_name": "Bike PSI",
+  "description": "클린처 자전거 타이어 권장 공기압 계산기",
+  "lang": "ko-KR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071018",
+  "theme_color": "#071018",
+  "orientation": "any"
+}
