@@ -1,5 +1,5 @@
-# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.0.0
-// Made by. Hyun Seock Son.
+# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.2
+
 
 ## 파일 역할
 - `index.html` — 화면 마크업
@@ -25,8 +25,7 @@ ES Module과 Service Worker는 HTTP(S) 환경이 필요합니다.
 `http://localhost:8080`
 
 ## PWA
-manifest와 Service Worker 골격은 준비했습니다.
-앱 아이콘은 디자인 확정 후 추가하는 것이 좋습니다.
+manifest, Service Worker, iOS/PWA 아이콘 세트와 iPad/iPhone 시작 화면을 포함합니다.
 
 ## Beta 4.0.0 Pressure Model v2
 기존의 28mm 로드타이어 기준 단일 거듭제곱식은 제거했습니다.
@@ -53,3 +52,29 @@ CST 26×2.10 Wire 조합은 40–65 PSI 참조 범위를 추가로 적용합니�
 - 시·군·구 이하 데이터는 포함하지 않습니다.
 - 기본 선택은 서울특별시입니다.
 
+
+## Beta 4.1.0 PWA polish
+- iOS `apple-touch-icon` 180×180 및 PWA 192/512, maskable 아이콘 추가
+- iPad Pro 13형 portrait/landscape 시작 화면 추가
+- 홈 화면 이름: `Bike Pressure Lab`
+- theme/background color를 `#02070b` 다크 톤으로 통일
+- safe-area 및 overscroll 배경 보강: iPad/iPhone 스크롤 끝에서 흰색이 비치는 현상 완화
+- Service Worker를 navigation network-first + static stale-while-revalidate 방식으로 개선
+- GitHub Pages 하위 경로 배포를 고려해 모든 PWA 경로를 상대경로로 유지
+
+
+## Beta 4.1.1 UX polish
+- 버전 배지는 `BETA 4.1.1`만 표시하고 중앙 정렬된 컴팩트 pill로 정리
+- SETUP 하단 계산 버튼을 제거하고 RESULT 권장값 바로 위에 독립 액션 영역으로 이동
+- 하중 표기를 `몸무게 / 추가중량 / 자전거중량`, 단위를 `Kg`로 정리
+- 하중 우측 보조 문구를 `총중량 계산`으로 변경
+- `기본 타이어 폭 D` → `기본 타이어 폭`, `D는 mm 기준` → `폭은 mm 기준`
+- 카드·라벨·결과 영역의 세로 리듬과 모바일 여백을 소폭 다듬어 UI 균형 개선
+
+
+## Beta 4.1.2 UI polish
+- 상단 버전 배지는 4.1.0 계열의 우측 정렬 pill 디자인으로 복원하고 `OFFLINE HTML` 문구를 제거
+- `HYBRID` → `HYBRID & CITY`, `하이브리드` → `하이브리드 & 생활형`으로 표시명 정리
+- 내부 `hybrid` 키와 압력 보정 계수는 그대로 유지하여 계산 로직 무변경
+- 하단 출처/계산 원칙은 기본적으로 접힌 `참조` details 영역으로 정리
+- Service Worker 캐시 버전을 4.1.2로 갱신

@@ -15,21 +15,49 @@
 
 *{box-sizing:border-box}
 
-html,body{
+html{
   margin:0;
-  color:var(--text);
-  background:
-    radial-gradient(circle at 15% 0%,rgba(159,242,29,.08),transparent 28rem),
-    linear-gradient(180deg,#071018 0%,#09131c 100%);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard","Noto Sans KR",sans-serif;
+  min-height:100%;
+  background:#02070b;
+  color-scheme:dark;
+  overscroll-behavior-y:none;
 }
 
-body{min-height:100vh}
+body{
+  margin:0;
+  min-height:100vh;
+  min-height:100svh;
+  min-height:100dvh;
+  color:var(--text);
+  background-color:#071018;
+  background-image:
+    radial-gradient(circle at 15% -4rem,rgba(159,242,29,.08),transparent 32rem),
+    linear-gradient(180deg,#071018 0%,#09131c 58%,#050b10 100%);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard","Noto Sans KR",sans-serif;
+  overscroll-behavior-y:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* iPad/iPhone의 고무줄 스크롤 시 흰색 viewport가 비치지 않도록
+   화면 바깥쪽까지 동일한 다크 배경을 고정합니다. */
+body::before{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  top:-50vh;
+  right:0;
+  bottom:-50vh;
+  left:0;
+  background:#02070b;
+  pointer-events:none;
+}
 
 .wrap{
   max-width:1180px;
   margin:0 auto;
-  padding:20px 18px 90px;
+  padding:calc(20px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(90px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
 }
 
 .topbar{
@@ -41,6 +69,7 @@ body{min-height:100vh}
 }
 
 .brand{min-width:0}
+
 
 .brand small{
   display:block;
@@ -72,6 +101,7 @@ body{min-height:100vh}
   margin:0;
   color:var(--muted);
   font-size:13px;
+  line-height:1.45;
 }
 
 .badge{
@@ -121,7 +151,7 @@ body{min-height:100vh}
 }
 
 .section{
-  padding:18px 20px;
+  padding:19px 20px 20px;
   border-bottom:1px solid rgba(33,50,64,.8);
 }
 
@@ -131,7 +161,8 @@ body{min-height:100vh}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:13px;
+  margin-bottom:14px;
+  line-height:1.25;
 }
 
 .section-title strong{
@@ -154,10 +185,11 @@ body{min-height:100vh}
 
 .field label{
   display:block;
-  margin:0 0 6px 3px;
+  margin:0 0 7px 3px;
   color:#d7e2e8;
   font-size:10px;
   font-weight:850;
+  line-height:1.35;
   letter-spacing:.01em;
 }
 
@@ -170,6 +202,7 @@ input,select{
   border-radius:14px;
   outline:none;
   font-size:14px;
+  line-height:1.25;
   appearance:none;
 }
 
@@ -244,14 +277,35 @@ input[readonly]{cursor:default}
 
 .calc-btn:active{transform:translateY(1px)}
 
+.result-column{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.result-action{
+  padding:11px;
+  background:linear-gradient(180deg,rgba(15,29,40,.96),rgba(9,20,29,.96));
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 14px 38px rgba(0,0,0,.20);
+}
+
+.result-action .calc-btn{
+  min-height:50px;
+  box-shadow:0 10px 26px rgba(159,242,29,.17);
+}
+
 .result-shell{
-  min-height:100%;
+  min-height:0;
+  flex:1;
   display:flex;
   flex-direction:column;
 }
 
 .hero{
-  padding:24px 22px 18px;
+  padding:23px 22px 19px;
   background:
     linear-gradient(145deg,rgba(159,242,29,.12),transparent 36%),
     linear-gradient(180deg,#111f2b,#0c1720);
@@ -290,7 +344,7 @@ input[readonly]{cursor:default}
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  margin-top:22px;
+  margin-top:20px;
 }
 
 .pressure{
@@ -367,7 +421,7 @@ input[readonly]{cursor:default}
   margin:5px 0 0;
   color:#91a5b0;
   font-size:10px;
-  line-height:1.55;
+  line-height:1.6;
 }
 
 .converter{
@@ -402,24 +456,38 @@ input[readonly]{cursor:default}
 }
 
 .footer-copy{max-width:900px}
+
+.footer-reference{max-width:900px}
+.footer-reference summary{
+  color:#647985;
+  font-size:9.5px;
+  letter-spacing:.035em;
+}
+.footer-reference .advanced-body{
+  padding-top:8px;
+  color:#586d79;
+}
+
 .warn{color:var(--warning)!important}
 .mt-10{margin-top:10px}
 .mt-17{margin-top:17px}
 
 @media(max-width:860px){
   .grid{grid-template-columns:1fr}
+  .result-column{gap:10px}
   .result-shell{min-height:auto}
   .topbar{align-items:center}
 }
 
 @media(max-width:560px){
-  .wrap{padding:10px 10px 70px}
+  .wrap{padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
   .topbar{padding:12px 4px 15px}
   .badge{display:none}
   .signature{margin:4px 0 6px;font-size:10.5px;opacity:.54}
   .card{border-radius:18px}
-  .section{padding:16px 14px}
+  .section{padding:16px 14px 17px}
   .card .head{padding:15px 14px}
+  .result-action{padding:9px;border-radius:16px}
   .fields,.fields.two{grid-template-columns:1fr 1fr}
   .fields.three-mobile{grid-template-columns:repeat(3,1fr)}
   .choice-grid{grid-template-columns:1fr 1fr}

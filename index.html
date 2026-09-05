@@ -3,13 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#071018">
+  <meta name="theme-color" content="#02070b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bike Pressure Lab">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <meta name="description" content="영등포 자전거 클린처 타이어 권장 공기압 계산기">
   <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" href="./splash/ipad-pro-13-portrait.png" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="./splash/ipad-pro-13-landscape.png" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="./splash/iphone-portrait.png" media="(orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="./splash/iphone-landscape.png" media="(orientation: landscape)">
   <link rel="stylesheet" href="./styles.css">
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.0.0</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.2</title>
 </head>
 <body>
 <div class="wrap">
@@ -20,7 +29,7 @@
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge">BETA 4.0.0 · OFFLINE HTML</div>
+    <div class="badge" aria-label="Beta version">BETA 4.1.2</div>
   </div>
 
   <div class="grid">
@@ -28,11 +37,11 @@
       <div class="head"><h2>SETUP / 계산 조건</h2><span class="kicker">01 INPUT</span></div>
 
       <div class="section">
-        <div class="section-title"><strong>하중</strong><span>A + B + C</span></div>
+        <div class="section-title"><strong>하중</strong><span>총중량 계산</span></div>
         <div class="fields three-mobile">
-          <div class="field"><label>몸무게 A · kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
-          <div class="field"><label>추가무게 B · kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
-          <div class="field"><label>자전거 C · kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
+          <div class="field"><label>몸무게 · Kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
+          <div class="field"><label>추가중량 · Kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
+          <div class="field"><label>자전거중량 · Kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
         </div>
       </div>
 
@@ -44,12 +53,12 @@
           <label class="choice"><input type="radio" name="bike" value="gravel"><b>GRAVEL</b><span>그래블</span></label>
           <label class="choice"><input type="radio" name="bike" value="hardtail"><b>FRONT SHOCK MTB</b><span>프론트쇽 MTB</span></label>
           <label class="choice"><input type="radio" name="bike" value="fullsus"><b>FULL-SUS MTB</b><span>풀쇽 MTB</span></label>
-          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID</b><span>하이브리드</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID &amp; CITY</b><span>하이브리드 &amp; 생활형</span></label>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title"><strong>휠 & 타이어</strong><span>D는 mm 기준</span></div>
+        <div class="section-title"><strong>휠 & 타이어</strong><span>폭은 mm 기준</span></div>
         <div class="fields two">
           <div class="field">
             <label>타이어 직경</label>
@@ -73,7 +82,7 @@
 
         <div class="fields two mt-10">
           <div class="field">
-            <label>기본 타이어 폭 D</label>
+            <label>기본 타이어 폭</label>
             <select id="widthPreset"></select>
           </div>
           <div class="field">
@@ -165,12 +174,16 @@
         </details>
       </div>
 
-      <div class="section"><button class="calc-btn" id="calculate">권장 공기압 계산</button></div>
     </div>
 
-    <div class="card result-shell">
-      <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
-      <div class="hero">
+    <div class="result-column">
+      <div class="result-action">
+        <button class="calc-btn" id="calculate" type="button">권장 공기압 계산</button>
+      </div>
+
+      <div class="card result-shell">
+        <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
+        <div class="hero">
         <div class="hero-top">
           <div>
             <h3 id="resultTitle">ROAD · 700C · 28 mm</h3>
@@ -214,15 +227,19 @@
         </div>
         <div class="note">※ 베타 계산기는 클린처(튜브) 전용입니다. 실제 주입 시 타이어/림 제조사 최소·최대 압력과 타이어 측면 표기를 최우선으로 확인하세요.</div>
       </div>
+      </div>
     </div>
   </div>
 
   <div class="footer">
-    <div class="footer-copy">
-      BETA 4.0.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
-      계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
-    </div>
-</div>
+    <details class="advanced footer-reference">
+      <summary>참조</summary>
+      <div class="advanced-body footer-copy">
+        BETA 4.1.2 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
+      </div>
+    </details>
+  </div>
 </div>
 
 

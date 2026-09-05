@@ -3,11 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#071018">
+  <meta name="theme-color" content="#02070b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Bike Pressure Lab">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <meta name="description" content="영등포 자전거 클린처 타이어 권장 공기압 계산기">
-    <style>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" href="./splash/ipad-pro-13-portrait.png" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="./splash/ipad-pro-13-landscape.png" media="(device-width: 1032px) and (device-height: 1376px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+  <link rel="apple-touch-startup-image" href="./splash/iphone-portrait.png" media="(orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="./splash/iphone-landscape.png" media="(orientation: landscape)">
+  <style>
 :root{
   --bg:#071018;
   --panel:#0d1822;
@@ -25,21 +35,49 @@
 
 *{box-sizing:border-box}
 
-html,body{
+html{
   margin:0;
-  color:var(--text);
-  background:
-    radial-gradient(circle at 15% 0%,rgba(159,242,29,.08),transparent 28rem),
-    linear-gradient(180deg,#071018 0%,#09131c 100%);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard","Noto Sans KR",sans-serif;
+  min-height:100%;
+  background:#02070b;
+  color-scheme:dark;
+  overscroll-behavior-y:none;
 }
 
-body{min-height:100vh}
+body{
+  margin:0;
+  min-height:100vh;
+  min-height:100svh;
+  min-height:100dvh;
+  color:var(--text);
+  background-color:#071018;
+  background-image:
+    radial-gradient(circle at 15% -4rem,rgba(159,242,29,.08),transparent 32rem),
+    linear-gradient(180deg,#071018 0%,#09131c 58%,#050b10 100%);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard","Noto Sans KR",sans-serif;
+  overscroll-behavior-y:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* iPad/iPhone의 고무줄 스크롤 시 흰색 viewport가 비치지 않도록
+   화면 바깥쪽까지 동일한 다크 배경을 고정합니다. */
+body::before{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  top:-50vh;
+  right:0;
+  bottom:-50vh;
+  left:0;
+  background:#02070b;
+  pointer-events:none;
+}
 
 .wrap{
   max-width:1180px;
   margin:0 auto;
-  padding:20px 18px 90px;
+  padding:calc(20px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(90px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
 }
 
 .topbar{
@@ -51,6 +89,7 @@ body{min-height:100vh}
 }
 
 .brand{min-width:0}
+
 
 .brand small{
   display:block;
@@ -82,6 +121,7 @@ body{min-height:100vh}
   margin:0;
   color:var(--muted);
   font-size:13px;
+  line-height:1.45;
 }
 
 .badge{
@@ -131,7 +171,7 @@ body{min-height:100vh}
 }
 
 .section{
-  padding:18px 20px;
+  padding:19px 20px 20px;
   border-bottom:1px solid rgba(33,50,64,.8);
 }
 
@@ -141,7 +181,8 @@ body{min-height:100vh}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:13px;
+  margin-bottom:14px;
+  line-height:1.25;
 }
 
 .section-title strong{
@@ -164,10 +205,11 @@ body{min-height:100vh}
 
 .field label{
   display:block;
-  margin:0 0 6px 3px;
+  margin:0 0 7px 3px;
   color:#d7e2e8;
   font-size:10px;
   font-weight:850;
+  line-height:1.35;
   letter-spacing:.01em;
 }
 
@@ -180,6 +222,7 @@ input,select{
   border-radius:14px;
   outline:none;
   font-size:14px;
+  line-height:1.25;
   appearance:none;
 }
 
@@ -254,14 +297,35 @@ input[readonly]{cursor:default}
 
 .calc-btn:active{transform:translateY(1px)}
 
+.result-column{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.result-action{
+  padding:11px;
+  background:linear-gradient(180deg,rgba(15,29,40,.96),rgba(9,20,29,.96));
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 14px 38px rgba(0,0,0,.20);
+}
+
+.result-action .calc-btn{
+  min-height:50px;
+  box-shadow:0 10px 26px rgba(159,242,29,.17);
+}
+
 .result-shell{
-  min-height:100%;
+  min-height:0;
+  flex:1;
   display:flex;
   flex-direction:column;
 }
 
 .hero{
-  padding:24px 22px 18px;
+  padding:23px 22px 19px;
   background:
     linear-gradient(145deg,rgba(159,242,29,.12),transparent 36%),
     linear-gradient(180deg,#111f2b,#0c1720);
@@ -300,7 +364,7 @@ input[readonly]{cursor:default}
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  margin-top:22px;
+  margin-top:20px;
 }
 
 .pressure{
@@ -377,7 +441,7 @@ input[readonly]{cursor:default}
   margin:5px 0 0;
   color:#91a5b0;
   font-size:10px;
-  line-height:1.55;
+  line-height:1.6;
 }
 
 .converter{
@@ -412,24 +476,38 @@ input[readonly]{cursor:default}
 }
 
 .footer-copy{max-width:900px}
+
+.footer-reference{max-width:900px}
+.footer-reference summary{
+  color:#647985;
+  font-size:9.5px;
+  letter-spacing:.035em;
+}
+.footer-reference .advanced-body{
+  padding-top:8px;
+  color:#586d79;
+}
+
 .warn{color:var(--warning)!important}
 .mt-10{margin-top:10px}
 .mt-17{margin-top:17px}
 
 @media(max-width:860px){
   .grid{grid-template-columns:1fr}
+  .result-column{gap:10px}
   .result-shell{min-height:auto}
   .topbar{align-items:center}
 }
 
 @media(max-width:560px){
-  .wrap{padding:10px 10px 70px}
+  .wrap{padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
   .topbar{padding:12px 4px 15px}
   .badge{display:none}
   .signature{margin:4px 0 6px;font-size:10.5px;opacity:.54}
   .card{border-radius:18px}
-  .section{padding:16px 14px}
+  .section{padding:16px 14px 17px}
   .card .head{padding:15px 14px}
+  .result-action{padding:9px;border-radius:16px}
   .fields,.fields.two{grid-template-columns:1fr 1fr}
   .fields.three-mobile{grid-template-columns:repeat(3,1fr)}
   .choice-grid{grid-template-columns:1fr 1fr}
@@ -441,7 +519,7 @@ input[readonly]{cursor:default}
 }
 
 </style>
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.0.0 Preview</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.2 Preview</title>
 </head>
 <body>
 <div class="wrap">
@@ -452,7 +530,7 @@ input[readonly]{cursor:default}
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge">BETA 4.0.0 PREVIEW · OFFLINE HTML</div>
+    <div class="badge" aria-label="Beta version">BETA 4.1.2</div>
   </div>
 
   <div class="grid">
@@ -460,11 +538,11 @@ input[readonly]{cursor:default}
       <div class="head"><h2>SETUP / 계산 조건</h2><span class="kicker">01 INPUT</span></div>
 
       <div class="section">
-        <div class="section-title"><strong>하중</strong><span>A + B + C</span></div>
+        <div class="section-title"><strong>하중</strong><span>총중량 계산</span></div>
         <div class="fields three-mobile">
-          <div class="field"><label>몸무게 A · kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
-          <div class="field"><label>추가무게 B · kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
-          <div class="field"><label>자전거 C · kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
+          <div class="field"><label>몸무게 · Kg</label><input id="rider" type="number" min="20" max="180" step="0.1" value="70"></div>
+          <div class="field"><label>추가중량 · Kg</label><input id="cargo" type="number" min="0" max="80" step="0.1" value="3"></div>
+          <div class="field"><label>자전거중량 · Kg</label><input id="bikeWeight" type="number" min="5" max="40" step="0.1" value="11"></div>
         </div>
       </div>
 
@@ -476,12 +554,12 @@ input[readonly]{cursor:default}
           <label class="choice"><input type="radio" name="bike" value="gravel"><b>GRAVEL</b><span>그래블</span></label>
           <label class="choice"><input type="radio" name="bike" value="hardtail"><b>FRONT SHOCK MTB</b><span>프론트쇽 MTB</span></label>
           <label class="choice"><input type="radio" name="bike" value="fullsus"><b>FULL-SUS MTB</b><span>풀쇽 MTB</span></label>
-          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID</b><span>하이브리드</span></label>
+          <label class="choice"><input type="radio" name="bike" value="hybrid"><b>HYBRID &amp; CITY</b><span>하이브리드 &amp; 생활형</span></label>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title"><strong>휠 & 타이어</strong><span>D는 mm 기준</span></div>
+        <div class="section-title"><strong>휠 & 타이어</strong><span>폭은 mm 기준</span></div>
         <div class="fields two">
           <div class="field">
             <label>타이어 직경</label>
@@ -505,7 +583,7 @@ input[readonly]{cursor:default}
 
         <div class="fields two mt-10">
           <div class="field">
-            <label>기본 타이어 폭 D</label>
+            <label>기본 타이어 폭</label>
             <select id="widthPreset"></select>
           </div>
           <div class="field">
@@ -597,12 +675,16 @@ input[readonly]{cursor:default}
         </details>
       </div>
 
-      <div class="section"><button class="calc-btn" id="calculate">권장 공기압 계산</button></div>
     </div>
 
-    <div class="card result-shell">
-      <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
-      <div class="hero">
+    <div class="result-column">
+      <div class="result-action">
+        <button class="calc-btn" id="calculate" type="button">권장 공기압 계산</button>
+      </div>
+
+      <div class="card result-shell">
+        <div class="head"><h2>RESULT / 권장값</h2><span class="kicker">02 OUTPUT</span></div>
+        <div class="hero">
         <div class="hero-top">
           <div>
             <h3 id="resultTitle">ROAD · 700C · 28 mm</h3>
@@ -646,15 +728,19 @@ input[readonly]{cursor:default}
         </div>
         <div class="note">※ 베타 계산기는 클린처(튜브) 전용입니다. 실제 주입 시 타이어/림 제조사 최소·최대 압력과 타이어 측면 표기를 최우선으로 확인하세요.</div>
       </div>
+      </div>
     </div>
   </div>
 
   <div class="footer">
-    <div class="footer-copy">
-      BETA 4.0.0 PREVIEW · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
-      계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
-    </div>
-</div>
+    <details class="advanced footer-reference">
+      <summary>참조</summary>
+      <div class="advanced-body footer-copy">
+        BETA 4.1.2 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
+      </div>
+    </details>
+  </div>
 </div>
 
 
@@ -749,7 +835,7 @@ const DATA = Object.freeze({
     gravel:   { name: "GRAVEL",          baseFactor: .96, splitFront: .95, splitRear: 1.05 },
     hardtail: { name: "FRONT SHOCK MTB", baseFactor: .93, splitFront: .94, splitRear: 1.06 },
     fullsus:  { name: "FULL-SUS MTB",    baseFactor: .91, splitFront: .94, splitRear: 1.06 },
-    hybrid:   { name: "HYBRID",          baseFactor: 1.00, splitFront: .96, splitRear: 1.04 }
+    hybrid:   { name: "HYBRID & CITY",   baseFactor: 1.00, splitFront: .96, splitRear: 1.04 }
   },
 
   /*
@@ -795,7 +881,6 @@ const DATA = Object.freeze({
     ]
   }
 });
-
 
 const {
   PSI_TO_BAR,
@@ -1020,8 +1105,6 @@ function computePressure(input) {
   };
 }
 
-
-
 const $ = id => document.getElementById(id);
 const DOM = {};
 
@@ -1243,7 +1326,6 @@ function init() {
 }
 
 init();
-
 </script>
 </body>
 </html>
