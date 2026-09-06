@@ -1,14 +1,16 @@
 import { DATA } from "./data.js";
-import { computePressure, validateInput, climateFor, isFiniteNumber } from "./engine.js";
+import { computePressure, validateInput, climateFor, isFiniteNumber, productInputError } from "./engine.js";
+import { initPresets, PRESET_FIELDS } from "./presets.js";
 
 const $ = id => document.getElementById(id);
 const DOM = {};
 const CALCULATION_COOLDOWN_MS = 300;
 let lastManualCalculationAt = -Infinity;
+let previousTireKey = null;
 
 const IDS = [
   "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
-  "tire","surface","special","region","month","climateInfo",
+  "tireInfo","tire","surface","special","region","month","climateInfo",
   "manualWidth","frontWidth","rearWidth","rimWidth","maxPsi","calculate","resultTitle",
   "resultMeta","status","frontPsi","rearPsi","frontSub","rearSub","tempMetric",
   "weightMetric","wheelMetric","thermalMetric","logicText","referenceText","safetyText",
@@ -66,6 +68,36 @@ function baseWidthMm() {
 function updateResolvedWidth() {
   const width = baseWidthMm();
   DOM.widthResolved.value = isFiniteNumber(width) ? `${width.toFixed(1)} mm` : "—";
+}
+
+function setBikeChoice(bikeKey) {
+  DOM.bikeRadios.forEach(radio => {
+    radio.checked = radio.value === bikeKey;
+    radio.closest(".choice").classList.toggle("active", radio.checked);
+  });
+}
+
+function applyBillyBonkersDefaults() {
+  DOM.wheel.value = "406";
+  DOM.widthStandard.value = "decimal";
+  populateWidthPresets();
+  // 2.00 inches is the selectable nominal size; the exact SKU is ETRTO 50-406.
+  DOM.widthPreset.value = (2 * 25.4).toFixed(4);
+  DOM.manualWidth.value = String(DATA.tires.billyBonkers20.widthMm);
+  DOM.frontWidth.value = "";
+  DOM.rearWidth.value = "";
+  setBikeChoice("minivelo");
+  updateResolvedWidth();
+}
+
+function syncTireProduct() {
+  const tireKey = DOM.tire.value;
+  const selected = tireKey === "billyBonkers20";
+  const enteredBillyBonkers = selected && previousTireKey !== tireKey;
+  DOM.tireInfo.hidden = !selected;
+  if (enteredBillyBonkers) applyBillyBonkersDefaults();
+  previousTireKey = tireKey;
+  calculateAndRender();
 }
 
 function updateClimateInfo() {
@@ -163,6 +195,15 @@ function renderResult(input, result) {
     renderStatus("CALCULATED");
   }
 
+  if (input.tireKey === "billyBonkers20") {
+    DOM.safetyText.textContent = `빌리봉커 20×2.00 공식 범위 30–65 PSI · 적용 범위 30–${result.appliedMaxPsi} PSI. ` +
+      (result.raisedToMinimum ? "MIN 미만 계산값을 30 PSI로 올렸습니다. " : "") +
+      (result.limited ? "MAX 초과 계산값을 상한으로 제한했습니다. " : "") +
+      "실제 타이어 측면과 림의 제한도 확인하세요. 일반 주행 참고 계산이며 점프·착지용 설정은 아닙니다.";
+    DOM.safetyText.classList.toggle("warn", result.limited || result.raisedToMinimum);
+    renderStatus(result.limited ? "MAX LIMITED" : result.raisedToMinimum ? "MIN LIMITED" : "CALCULATED", result.limited || result.raisedToMinimum);
+  }
+
   DOM.convPsi.textContent = result.representative.toFixed(1);
   DOM.convBar.textContent = result.conversions.representativeBar.toFixed(2);
   DOM.convKpa.textContent = Math.round(result.conversions.representativeKpa);
@@ -178,6 +219,9 @@ function calculateAndRender() {
 
   if (!validateInput(input)) {
     renderStatus("CHECK INPUT", true);
+    ["frontPsi", "rearPsi", "frontSub", "rearSub", "convPsi", "convBar", "convKpa"].forEach(id => DOM[id].textContent = "—");
+    DOM.safetyText.textContent = productInputError(input) ?? "입력값의 허용범위를 확인하세요.";
+    DOM.safetyText.classList.add("warn");
     return;
   }
 
@@ -195,9 +239,7 @@ function handleCalculateClick() {
 function syncBikeChoice(target) {
   const choice = target.closest(".choice");
   if (!choice) return;
-  DOM.bikeChoices.querySelectorAll(".choice").forEach(element =>
-    element.classList.toggle("active", element === choice)
-  );
+  setBikeChoice(choice.querySelector('input[name="bike"]').value);
 }
 
 function bindEvents() {
@@ -207,10 +249,12 @@ function bindEvents() {
   DOM.manualWidth.addEventListener("input", updateResolvedWidth);
   DOM.region.addEventListener("change", updateClimateInfo);
   DOM.month.addEventListener("change", updateClimateInfo);
+  DOM.tire.addEventListener("change", syncTireProduct);
   DOM.calculate.addEventListener("click", handleCalculateClick);
 }
 
 function registerServiceWorker() {
+  if (window.location.protocol === "file:") return;
   if (!("serviceWorker" in navigator)) return;
 
   window.addEventListener("load", () => {
@@ -220,13 +264,41 @@ function registerServiceWorker() {
   });
 }
 
+function capturePresetSettings() {
+  const settings = {};
+  for (const id of PRESET_FIELDS) {
+    if (DOM[id].validity?.badInput) throw new Error("숫자 입력값을 확인하세요.");
+    settings[id] = DOM[id].value;
+  }
+  settings.bikeKey = selectedBikeKey();
+  settings.wheelIndex = DOM.wheel.selectedIndex;
+  return settings;
+}
+
+function restorePresetSettings(settings) {
+  DOM.widthStandard.value = settings.widthStandard;
+  populateWidthPresets();
+  for (const id of PRESET_FIELDS) DOM[id].value = settings[id];
+  // 700C and the legacy 28.5-inch option share BSD 622: retain the exact label.
+  DOM.wheel.selectedIndex = settings.wheelIndex;
+  setBikeChoice(settings.bikeKey);
+  // Restoring a model must retain saved measured widths, not apply new defaults.
+  DOM.tireInfo.hidden = settings.tire !== "billyBonkers20";
+  previousTireKey = settings.tire;
+  updateResolvedWidth();
+  updateClimateInfo();
+  calculateAndRender();
+}
+
 function init() {
   cacheDom();
   setupMonths();
   populateWidthPresets();
+  previousTireKey = DOM.tire.value;
   updateClimateInfo();
   bindEvents();
   calculateAndRender();
+  initPresets({ capture: capturePresetSettings, restore: restorePresetSettings });
   registerServiceWorker();
 }
 

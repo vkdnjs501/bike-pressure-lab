@@ -48,6 +48,25 @@ test('names are displayed as text and optional empty values clear previously loa
  a.input('frontWidth','32');a.input('maxPsi','30');a.d.querySelector('[data-action="load"]').click();assert.equal(a.$('frontWidth').value,'');assert.equal(a.$('maxPsi').value,'');a.w.close();
 });
 
+test('Billy Bonkers applies 20-inch, nominal 2.00-inch, ETRTO 50 mm, and MINI VELO once per product entry',()=>{
+ const a=app();
+ a.choose('tire','billyBonkers20');
+ assert.equal(a.$('wheel').value,'406');
+ assert.equal(a.$('widthStandard').value,'decimal');
+ assert.equal(a.$('widthPreset').value,'50.8000');
+ assert.equal(a.$('manualWidth').value,'50');
+ assert.equal(a.$('widthResolved').value,'50.0 mm');
+ assert.equal(a.d.querySelector('input[name="bike"]:checked').value,'minivelo');
+ a.input('manualWidth','49.5');a.d.querySelector('input[value="road"]').click();
+ a.choose('tire','billyBonkers20');
+ assert.equal(a.$('manualWidth').value,'49.5');
+ assert.equal(a.d.querySelector('input[name="bike"]:checked').value,'road');
+ a.choose('tire','cst');a.choose('tire','billyBonkers20');
+ assert.equal(a.$('manualWidth').value,'50');
+ assert.equal(a.d.querySelector('input[name="bike"]:checked').value,'minivelo');
+ a.w.close();
+});
+
 test('export prepares a reusable download link with validated round-trip data', async()=>{
  const a=app();let blob;let clicked=0;
  a.w.URL.createObjectURL=value=>{blob=value;return 'blob:https://test.example/preset-test';};

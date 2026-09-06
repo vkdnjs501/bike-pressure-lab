@@ -20,7 +20,7 @@
   <link rel="apple-touch-startup-image" href="./splash/iphone-portrait.png" media="(orientation: portrait)">
   <link rel="apple-touch-startup-image" href="./splash/iphone-landscape.png" media="(orientation: landscape)">
   <link rel="stylesheet" href="./styles.css">
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.0</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.1</title>
 </head>
 <body>
 <div class="wrap">
@@ -31,7 +31,7 @@
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge" aria-label="Beta version">BETA 4.2.0</div>
+    <div class="badge" aria-label="Beta version">BETA 4.2.1</div>
   </div>
 
   <div class="grid">
@@ -106,7 +106,7 @@
           </select>
           <p id="tireInfo" class="hint" hidden aria-live="polite">20×2.00 · ETRTO 50-406 · 폴딩 · 튜브용 · 67 EPI · 355g.<br>
             펌프트랙·더트점프·슬로프스타일용. 미세 돌기와 촘촘한 블록이 흙·모래 노면의 접지를 돕고, 경사진 돌기가 구름을 돕습니다.<br>
-            공식 허용범위 30–65 PSI (2.0–4.5 bar). 제품 선택 시 20인치·공칭 폭 50mm로 설정됩니다. 다른 크기·사양에는 이 범위를 적용하지 마세요.<br>
+            공식 허용범위 30–65 PSI (2.0–4.5 bar). 제품을 선택한 순간 1회, 20인치·2.00″와 MINI VELO로 자동 설정되며 계산에는 정확한 ETRTO 폭 50mm를 적용합니다. 이후 사용자가 바꾼 값은 유지됩니다. 다른 크기·사양에는 이 범위를 적용하지 마세요.<br>
             <a href="https://www.schwalbe.com/en/Billy-Bonkers-11654376" target="_blank" rel="noopener noreferrer">슈발베 공식 제품 정보</a> · 2026-09-06 확인
           </p>
         </div>
@@ -145,6 +145,7 @@
               <option value="busan">부산광역시</option>
               <option value="daegu">대구광역시</option>
               <option value="incheon">인천광역시</option>
+              <option value="yeongjong">영종도 · 인천공항권</option>
               <option value="gwangju">광주광역시</option>
               <option value="daejeon">대전광역시</option>
               <option value="ulsan">울산광역시</option>
@@ -270,7 +271,7 @@
     <details class="advanced footer-reference">
       <summary>참조</summary>
       <div class="advanced-body footer-copy">
-        BETA 4.2.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        BETA 4.2.1 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
         계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
       </div>
     </details>

@@ -113,12 +113,22 @@ function cst26x210ReferenceBand(input) {
   return null;
 }
 
+export function productInputError(input) {
+  const product = DATA.tires[input.tireKey];
+  if (input.tireKey !== "billyBonkers20") return null;
+  if (input.wheel !== product.wheel) return "선택한 빌리봉커는 20인치(50-406) 전용입니다. 타이어 직경을 20인치로 맞추세요.";
+  if (isFiniteNumber(input.maxPsi) && input.maxPsi < product.minPsi)
+    return "입력한 MAX가 빌리봉커 공식 MIN 30 PSI보다 낮습니다. 타이어와 림의 허용범위를 다시 확인하세요.";
+  return null;
+}
+
 export function validateInput(input) {
   const inRange = (value, min, max) => isFiniteNumber(value) && value >= min && value <= max;
   const optionalInRange = (value, min, max) => !isFiniteNumber(value) || inRange(value, min, max);
   const supportedWheels = new Set([305, 355, 406, 457, 507, 559, 584, 622]);
 
   return (
+    !productInputError(input) &&
     inRange(input.rider, 20, 180) &&
     inRange(input.cargo, 0, 80) &&
     inRange(input.bikeWeight, 5, 40) &&
@@ -134,6 +144,8 @@ export function validateInput(input) {
 }
 
 export function computePressure(input) {
+  const productError = productInputError(input);
+  if (productError) throw new Error(productError);
   const totalWeight = input.rider + input.cargo + input.bikeWeight;
   const climate = climateFor(input.regionKey, input.month);
   const rideTemp = climate + input.special.tempDelta;
@@ -165,7 +177,12 @@ export function computePressure(input) {
   let front = thermalCorrect(frontBase, rideTemp);
   let rear = thermalCorrect(rearBase, rideTemp);
 
-  const referenceBand = cst26x210ReferenceBand(input);
+  const product = input.tireKey === "billyBonkers20" ? DATA.tires.billyBonkers20 : null;
+  const referenceBand = product ? {
+    minPsi: product.minPsi, maxPsi: product.maxPsi,
+    label: "빌리봉커 20×2.00 (50-406) · 슈발베 공식", source: product.source
+  } : cst26x210ReferenceBand(input);
+  const raisedToMinimum = Boolean(referenceBand && (front < referenceBand.minPsi || rear < referenceBand.minPsi));
 
   // Apply known/reference operating floor only when we have a matching reference.
   if (referenceBand) {
@@ -183,6 +200,9 @@ export function computePressure(input) {
     appliedMaxPsi = referenceBand.maxPsi;
   }
 
+  // A typed higher MAX cannot relax this product's verified ceiling.
+  if (product) appliedMaxPsi = Math.min(appliedMaxPsi ?? product.maxPsi, product.maxPsi);
+
   if (isFiniteNumber(appliedMaxPsi)) {
     if (front > appliedMaxPsi) { front = appliedMaxPsi; limited = true; }
     if (rear > appliedMaxPsi) { rear = appliedMaxPsi; limited = true; }
@@ -190,6 +210,11 @@ export function computePressure(input) {
 
   front = roundHalf(front);
   rear = roundHalf(rear);
+  if (product) {
+    const roundedCeiling = Math.floor(appliedMaxPsi * 2) / 2;
+    front = clamp(front, product.minPsi, roundedCeiling);
+    rear = clamp(rear, product.minPsi, roundedCeiling);
+  }
 
   const rawAverage = (frontBase + rearBase) / 2;
   const finalAverage = (front + rear) / 2;
@@ -201,6 +226,7 @@ export function computePressure(input) {
     front,
     rear,
     limited,
+    raisedToMinimum,
     appliedMaxPsi,
     referenceBand,
     sourceGuide: {

@@ -45,6 +45,8 @@ export const DATA = Object.freeze({
     */
     profiles: {
       capital:   [-1.0,-0.8,7.1,13.5,17.4,23.4,27.4,27.2,22.8,15.8,7.6,1.3],
+      // 영종도는 독립 ASOS 값으로 단정하지 않고 KMA 수도권 광역 2025 프로필을 연결합니다.
+      yeongjong: [-1.0,-0.8,7.1,13.5,17.4,23.4,27.4,27.2,22.8,15.8,7.6,1.3],
       gangwon:   [-2.3,-2.0,5.6,11.6,15.7,21.4,25.2,25.3,20.8,13.7,5.6,-0.5],
       chungbuk:  [-1.7,-1.6,6.6,12.8,16.7,22.8,26.8,26.8,22.3,15.3,6.8,0.4],
       chungnam:  [-0.9,-1.1,6.8,12.8,16.7,22.7,26.7,26.7,22.4,15.6,7.4,1.1],
@@ -61,6 +63,7 @@ export const DATA = Object.freeze({
     busan:     { profile:"gyeongnam", label:"부산광역시" },
     daegu:     { profile:"gyeongbuk", label:"대구광역시" },
     incheon:   { profile:"capital",   label:"인천광역시" },
+    yeongjong: { profile:"yeongjong", label:"영종도 · 인천공항권" },
     gwangju:   { profile:"jeonnam",   label:"광주광역시" },
     daejeon:   { profile:"chungnam",  label:"대전광역시" },
     ulsan:     { profile:"gyeongnam", label:"울산광역시" },
@@ -101,6 +104,14 @@ export const DATA = Object.freeze({
     kenda:         { factor: 1.00, label: "Kenda 보급형 · Wire", casing: "wire" },
     schwalbeOne:   { factor: .99,  label: "Schwalbe One · Folding", casing: "folding" },
     marathonRacer: { factor: .99,  label: "Marathon Racer", casing: "folding" },
+    billyBonkers20: {
+      factor: 1.00, label: "슈발베 빌리봉커 20×2.00 · Performance / ADDIX", casing: "folding",
+      wheel: 406, widthMm: 50, etrto: "50-406", productNumber: "11654376",
+      minPsi: 30, maxPsi: 65, minBar: 2.0, maxBar: 4.5,
+      source: "https://www.schwalbe.com/en/Billy-Bonkers-11654376",
+      verifiedOn: "2026-09-06"
+      // No manufacturer-published pressure correction for tread/ADDIX: neutral factor.
+    },
     chaoyangMtb:   { factor: 1.00, label: "Chaoyang MTB · Wire", casing: "wire" }
   },
 
@@ -126,7 +137,7 @@ export const DATA = Object.freeze({
     ],
     decimal: [
       ['1.125"',1.125*25.4],['1.50"',1.50*25.4],['1.75"',1.75*25.4],
-      ['1.95"',1.95*25.4],['2.10"',2.10*25.4],['2.20"',2.20*25.4],
+      ['1.95"',1.95*25.4],['2.00"',2.00*25.4],['2.10"',2.10*25.4],['2.20"',2.20*25.4],
       ['2.25"',2.25*25.4],['2.40"',2.40*25.4],['2.50"',2.50*25.4]
     ],
     fraction: [

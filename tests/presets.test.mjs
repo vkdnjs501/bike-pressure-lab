@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizeSettings, normalizePresets, packPresets, parsePresets, mergePresets, presetName, PRESET_LIMIT, PRESET_STORAGE_KEY } from '../presets.js';
+import { climateFor } from '../engine.js';
 const settings = {
   rider:'72', cargo:'10', bikeWeight:'12', wheel:'406', wheelIndex:2,
   widthStandard:'decimal', widthPreset:'50.8000', manualWidth:'50',
@@ -50,4 +51,9 @@ test('bounded names, own schema values, and unknown coefficient stripping', () =
   const rebuilt=normalizeSettings({...settings,factor:0.01,script:'alert(1)'});
   assert(!Object.hasOwn(rebuilt,'factor'));
   assert(!Object.hasOwn(rebuilt,'script'));
+});
+
+test('Yeongjong is a valid KMA capital-region 2025 climate selection', () => {
+  assert.equal(climateFor('yeongjong', 0), -1.0);
+  assert.equal(climateFor('yeongjong', 7), 27.2);
 });

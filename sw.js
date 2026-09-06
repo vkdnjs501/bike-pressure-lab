@@ -1,10 +1,11 @@
-const CACHE_NAME = "ybpl-beta-4.1.3";
+const CACHE_NAME = "ybpl-beta-4.2.1";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./data.js",
   "./engine.js",
+  "./presets.js",
   "./app.js",
   "./manifest.webmanifest",
   "./favicon-32.png",
