@@ -550,7 +550,7 @@ input[readonly]{cursor:default}
 }
 
 </style>
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.1</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.3.0</title>
 </head>
 <body>
 <div class="wrap">
@@ -561,7 +561,7 @@ input[readonly]{cursor:default}
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge" aria-label="Beta version">BETA 4.2.1</div>
+    <div class="badge" aria-label="Beta version">BETA 4.3.0</div>
   </div>
 
   <div class="grid">
@@ -618,7 +618,7 @@ input[readonly]{cursor:default}
             <select id="widthPreset"></select>
           </div>
           <div class="field">
-            <label>계산 적용 폭</label>
+            <label>계산 적용 폭 · 앞/뒤</label>
             <input id="widthResolved" type="text" value="28.0 mm" readonly>
           </div>
         </div>
@@ -634,11 +634,6 @@ input[readonly]{cursor:default}
             <option value="chaoyangMtb">6. Chaoyang 보급형 MTB · Wire Bead</option>
             <option value="billyBonkers20">7. 슈발베 빌리봉커 20×2.00 · Performance / ADDIX</option>
           </select>
-          <p id="tireInfo" class="hint" hidden aria-live="polite">20×2.00 · ETRTO 50-406 · 폴딩 · 튜브용 · 67 EPI · 355g.<br>
-            펌프트랙·더트점프·슬로프스타일용. 미세 돌기와 촘촘한 블록이 흙·모래 노면의 접지를 돕고, 경사진 돌기가 구름을 돕습니다.<br>
-            공식 허용범위 30–65 PSI (2.0–4.5 bar). 제품을 선택한 순간 1회, 20인치·2.00″와 MINI VELO로 자동 설정되며 계산에는 정확한 ETRTO 폭 50mm를 적용합니다. 이후 사용자가 바꾼 값은 유지됩니다. 다른 크기·사양에는 이 범위를 적용하지 마세요.<br>
-            <a href="https://www.schwalbe.com/en/Billy-Bonkers-11654376" target="_blank" rel="noopener noreferrer">슈발베 공식 제품 정보</a> · 2026-09-06 확인
-          </p>
         </div>
       </div>
 
@@ -702,6 +697,7 @@ input[readonly]{cursor:default}
         <details class="advanced">
           <summary>고급 설정</summary>
           <div class="advanced-body">
+            <p class="hint">실측 폭은 규격보다 우선합니다. 기본 규격을 새로 선택하면 이전 실측 폭이 해제됩니다.</p>
             <div class="fields two">
               <div class="field"><label>실측 기본 타이어 폭 · mm</label><input id="manualWidth" type="number" min="20" max="80" step="0.1" placeholder="미입력 시 일반 규격 사용"></div>
               <div class="field"><label>앞 타이어 폭 · mm</label><input id="frontWidth" type="number" min="20" max="80" step="0.1" placeholder="기본/실측 폭 사용"></div>
@@ -801,7 +797,7 @@ input[readonly]{cursor:default}
     <details class="advanced footer-reference">
       <summary>참조</summary>
       <div class="advanced-body footer-copy">
-        BETA 4.2.1 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        BETA 4.3.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
         계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
       </div>
     </details>
@@ -1565,7 +1561,7 @@ let previousTireKey = null;
 
 const IDS = [
   "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
-  "tireInfo","tire","surface","special","region","month","climateInfo",
+  "tire","surface","special","region","month","climateInfo",
   "manualWidth","frontWidth","rearWidth","rimWidth","maxPsi","calculate","resultTitle",
   "resultMeta","status","frontPsi","rearPsi","frontSub","rearSub","tempMetric",
   "weightMetric","wheelMetric","thermalMetric","logicText","referenceText","safetyText",
@@ -1622,7 +1618,21 @@ function baseWidthMm() {
 
 function updateResolvedWidth() {
   const width = baseWidthMm();
-  DOM.widthResolved.value = isFiniteNumber(width) ? `${width.toFixed(1)} mm` : "—";
+  const front = number(DOM.frontWidth) || width;
+  const rear = number(DOM.rearWidth) || width;
+  DOM.widthResolved.value = front !== rear
+    ? `앞 ${front.toFixed(1)} / 뒤 ${rear.toFixed(1)} mm`
+    : isFiniteNumber(front) ? `${front.toFixed(1)} mm` : "—";
+}
+
+function selectWidth() {
+  // An explicit size selection supersedes measurements from the previous tire.
+  DOM.manualWidth.value = DOM.tire.value === "billyBonkers20" &&
+    DOM.widthStandard.value === "decimal" && DOM.widthPreset.value === "50.8000" ? "50" : "";
+  DOM.frontWidth.value = "";
+  DOM.rearWidth.value = "";
+  updateResolvedWidth();
+  calculateAndRender();
 }
 
 function setBikeChoice(bikeKey) {
@@ -1649,7 +1659,6 @@ function syncTireProduct() {
   const tireKey = DOM.tire.value;
   const selected = tireKey === "billyBonkers20";
   const enteredBillyBonkers = selected && previousTireKey !== tireKey;
-  DOM.tireInfo.hidden = !selected;
   if (enteredBillyBonkers) applyBillyBonkersDefaults();
   previousTireKey = tireKey;
   calculateAndRender();
@@ -1799,9 +1808,11 @@ function syncBikeChoice(target) {
 
 function bindEvents() {
   DOM.bikeChoices.addEventListener("click", event => syncBikeChoice(event.target));
-  DOM.widthStandard.addEventListener("change", populateWidthPresets);
-  DOM.widthPreset.addEventListener("change", updateResolvedWidth);
+  DOM.widthStandard.addEventListener("change", () => { populateWidthPresets(); selectWidth(); });
+  DOM.widthPreset.addEventListener("change", selectWidth);
   DOM.manualWidth.addEventListener("input", updateResolvedWidth);
+  DOM.frontWidth.addEventListener("input", updateResolvedWidth);
+  DOM.rearWidth.addEventListener("input", updateResolvedWidth);
   DOM.region.addEventListener("change", updateClimateInfo);
   DOM.month.addEventListener("change", updateClimateInfo);
   DOM.tire.addEventListener("change", syncTireProduct);
@@ -1838,7 +1849,6 @@ function restorePresetSettings(settings) {
   DOM.wheel.selectedIndex = settings.wheelIndex;
   setBikeChoice(settings.bikeKey);
   // Restoring a model must retain saved measured widths, not apply new defaults.
-  DOM.tireInfo.hidden = settings.tire !== "billyBonkers20";
   previousTireKey = settings.tire;
   updateResolvedWidth();
   updateClimateInfo();

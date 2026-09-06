@@ -1,4 +1,4 @@
-# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.1
+# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.3.0
 
 
 ## 파일 역할
@@ -147,3 +147,6 @@ CST 26×2.10 Wire 조합은 40–65 PSI 참조 범위를 추가로 적용합니�
 
 - 슈발베의 현행 Billy Bonkers 20×2.00 SKU 11654376: ETRTO 50-406, 30–65 PSI / 2.0–4.5 bar.
 - KMA 기후통계의 광역 통계는 서울·인천·경기 등 62개 지점 기반 지역 평균을 제공하며, 이 앱은 해당 광역 프로필 구조를 사용합니다: https://data.kma.go.kr/stcs/grnd/grndTaList.do
+
+## Beta 4.3.0
+규격 변경 후 남는 실측 폭 오류 수정, 계산 적용 앞/뒤 폭 표시, 빌리봉커 소개 제거. 계산 비교와 상세 변경점은 RELEASE_NOTES.md를 참고하세요.

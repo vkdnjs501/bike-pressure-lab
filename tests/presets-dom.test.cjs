@@ -67,6 +67,25 @@ test('Billy Bonkers applies 20-inch, nominal 2.00-inch, ETRTO 50 mm, and MINI VE
  a.w.close();
 });
 
+test('switching from Billy to 700x28C removes stale widths and calculates the 90kg road setup',()=>{
+ const a=app();a.choose('tire','billyBonkers20');
+ a.input('frontWidth','50');a.input('rearWidth','50');
+ a.choose('tire','schwalbeOne');a.choose('wheel','622');
+ a.d.querySelector('input[value="road"]').click();
+ a.input('rider','78');a.input('cargo','0');a.input('bikeWeight','12');
+ a.choose('region','seoul');a.choose('month','8');
+ a.choose('widthStandard','c');a.choose('widthPreset','28.0000');
+ for(const id of ['manualWidth','frontWidth','rearWidth'])assert.equal(a.$(id).value,'');
+ assert.equal(a.$('widthResolved').value,'28.0 mm');
+ assert.equal(a.$('frontPsi').textContent,'93.5');
+ assert.equal(a.$('rearPsi').textContent,'101.0');
+ assert.equal(a.$('tireInfo'),null);
+ a.input('frontWidth','29');a.input('rearWidth','30');
+ assert.equal(a.$('widthResolved').value,'앞 29.0 / 뒤 30.0 mm');
+ a.choose('widthPreset','28.0000');assert.equal(a.$('widthResolved').value,'28.0 mm');
+ a.w.close();
+});
+
 test('export prepares a reusable download link with validated round-trip data', async()=>{
  const a=app();let blob;let clicked=0;
  a.w.URL.createObjectURL=value=>{blob=value;return 'blob:https://test.example/preset-test';};
