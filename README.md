@@ -1,4 +1,4 @@
-# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.3
+# YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.0
 
 
 ## 파일 역할
@@ -89,3 +89,49 @@ CST 26×2.10 Wire 조합은 40–65 PSI 참조 범위를 추가로 적용합니�
 - 렌더링은 기존과 같이 `textContent` 중심이며 `eval`, `innerHTML`, `document.write`를 사용하지 않습니다.
 
 > 한계: GitHub Pages의 정적 클라이언트 코드만으로는 DDoS, 서버 측 봇/Rate Limit, 저장소 계정 탈취를 차단할 수 없습니다. 이 버전은 브라우저/캐시/입력 경계를 강화하는 경량 하드닝입니다.
+
+
+## Beta 4.1.4 — Billy Bonkers
+- Added 2.00-inch width and Schwalbe Billy Bonkers 20×2.00, 50-406, Performance / ADDIX, folding, tube (11654376).
+- Current official global and US product pages, checked 2026-09-06: 30–65 PSI / 2.0–4.5 bar, 67 EPI, 355 g (global page).
+- Sources: https://www.schwalbe.com/en/Billy-Bonkers-11654376 and https://www.schwalbetires.com/Billy-Bonkers-11654376
+- Selecting the product sets wheel 406 and nominal ETRTO width 50 mm; measured width overrides remain available. Other wheel sizes are rejected for this exact SKU.
+- Fine micro teeth and closely spaced blocks support grip on dusty/sandy ground; ramps support rolling. These descriptions do not establish a numeric pressure correction: this product uses a neutral factor 1.00.
+- Official PSI floor/ceiling applied after calculation; a lower user MAX is respected, a higher MAX cannot override 65 PSI. MAX below MIN blocks output. Half-PSI rounding cannot exceed a lower MAX.
+- Official limits are not a manufacturer recommendation for the calculated riding setup. The general estimator does not model jumping/landing loads.
+- Some older catalogues/retailers show 80 PSI: this release uses current exact-SKU official pages. Check the actual sidewall and rim.
+- Existing tire calculations unchanged; cache bumped to 4.1.4.
+
+
+## Beta 4.2.0 — 마이 프리셋
+
+### 사용 방법
+1. 원하는 하중·자전거 타입·타이어·휠·노면·기후·고급 값을 입력합니다.
+2. 고급 설정 바로 아래의 `마이 프리셋 +`를 펼칩니다.
+3. `마이 프리셋 생성`으로 현재 입력값을 담고 `자전거 이름 n`을 변경합니다.
+4. `편집 완료`를 누르면 이 브라우저에 저장되고 패널이 접힙니다.
+5. 이후 프리셋 이름 버튼을 누르면 모든 입력값을 복원하고 다시 계산합니다.
+
+- 기본 상태는 0개이며 최대 9개까지 저장합니다. 기본 이름은 `마이 프리셋 1~9`입니다.
+- 추가·이름 변경·값 갱신·삭제·파일 가져오기는 편집 중인 목록에 반영되고, `편집 완료`에서만 확정합니다.
+- 단순히 패널을 접어도 현재 화면의 편집 내용은 남습니다. 저장하지 않고 새로고침하면 미확정 편집은 사라질 수 있습니다.
+- `변경 취소`는 마지막으로 저장한 목록을 복원합니다. 계산기 입력값 자체를 되돌리지는 않습니다.
+- 기존 프리셋의 수치를 바꾸려면 계산기에 새 값을 입력한 뒤 해당 프리셋의 `편집 → 현재 값으로 갱신 → 편집 완료`를 사용합니다.
+- 개별 또는 전체 JSON 파일을 내보낼 수 있습니다. 자동 다운로드가 시작되지 않으면 `프리셋 파일 받기` 링크를 사용합니다.
+- 가져오기는 빈 자리에 추가합니다. 9개를 초과하거나 형식·버전·입력값이 잘못된 파일은 전체를 거절하며 기존 목록을 유지합니다.
+- 저장은 동일 기기·동일 브라우저·동일 사이트 주소 기준입니다. 브라우저 데이터 삭제에 대비하거나 다른 기기로 옮기려면 파일을 내보내세요.
+- 저장 불가·용량 부족·다른 창의 변경 충돌 시 성공으로 표시하지 않고 편집 내용을 보존합니다.
+
+### 화면과 배포
+- 원본 상단, 계산 버튼 위치, 계산 엔진과 타이어 데이터는 Beta 4.1.4와 동일합니다. 상단에 프리셋 버튼이나 기획안 제목을 추가하지 않습니다.
+- 형광초록은 펼쳐진 프리셋 영역의 작은 생성/완료 버튼에만 사용합니다.
+- 서비스워커 캐시는 4.2.0으로 갱신하며 `presets.js`를 오프라인 캐시에 추가합니다. 프리셋 저장 키는 앱 버전과 독립적으로 유지합니다.
+- 배포용 파일은 기존과 동일한 정적 HTML/JS입니다. GitHub에는 압축을 푼 파일을 업로드하면 됩니다. npm 설치는 사용이나 GitHub Pages 배포에 필요하지 않습니다.
+- 개발/테스트 전용 Vite와 테스트 스크립트를 추가했습니다. `npm install`, `npm test`로 검증하며 `npm run standalone`으로 단일 HTML을 다시 만듭니다.
+- HTTP 전용 개발 미리보기에서만 HTTPS 강제 업그레이드를 제외합니다. 배포용 index.html의 보안 정책은 유지합니다.
+
+### 검증 기록
+- 자동 테스트 14개 통과: 편집 완료 전후 저장, 재열기/복원, 빈 값 복원, 0~9개 제한, 이름 수정/삭제 취소, 값 갱신, 파일 왕복, 잘못된/큰 파일, 저장 실패, 여러 창 충돌, 텍스트 안전 출력.
+- 실제 Chrome 화면에서 생성·이름 변경·편집 완료·새로고침·불러오기·파일 가져오기 검증. 빌리봉커의 앞/뒤 실측 폭과 림 폭·MAX PSI 복원 확인.
+- 내보내기 데이터와 다운로드 링크는 자동 테스트로 검증했습니다. 테스트 브라우저의 다운로드 완료 이벤트는 확인되지 않아 직접 받기 링크를 함께 제공합니다. 실제 iPad Safari의 파일 저장은 베타 사용 환경에서 확인이 필요합니다.
+- 실제 GitHub Pages 반영은 사용자가 업데이트 파일을 업로드한 뒤 이루어집니다.

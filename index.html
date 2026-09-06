@@ -20,7 +20,7 @@
   <link rel="apple-touch-startup-image" href="./splash/iphone-portrait.png" media="(orientation: portrait)">
   <link rel="apple-touch-startup-image" href="./splash/iphone-landscape.png" media="(orientation: landscape)">
   <link rel="stylesheet" href="./styles.css">
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.3</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.0</title>
 </head>
 <body>
 <div class="wrap">
@@ -31,7 +31,7 @@
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge" aria-label="Beta version">BETA 4.1.3</div>
+    <div class="badge" aria-label="Beta version">BETA 4.2.0</div>
   </div>
 
   <div class="grid">
@@ -102,7 +102,13 @@
             <option selected value="schwalbeOne">4. Schwalbe One · Folding Bead</option>
             <option value="marathonRacer">5. Schwalbe Marathon Racer · Folding/Wire 계열</option>
             <option value="chaoyangMtb">6. Chaoyang 보급형 MTB · Wire Bead</option>
+            <option value="billyBonkers20">7. 슈발베 빌리봉커 20×2.00 · Performance / ADDIX</option>
           </select>
+          <p id="tireInfo" class="hint" hidden aria-live="polite">20×2.00 · ETRTO 50-406 · 폴딩 · 튜브용 · 67 EPI · 355g.<br>
+            펌프트랙·더트점프·슬로프스타일용. 미세 돌기와 촘촘한 블록이 흙·모래 노면의 접지를 돕고, 경사진 돌기가 구름을 돕습니다.<br>
+            공식 허용범위 30–65 PSI (2.0–4.5 bar). 제품 선택 시 20인치·공칭 폭 50mm로 설정됩니다. 다른 크기·사양에는 이 범위를 적용하지 마세요.<br>
+            <a href="https://www.schwalbe.com/en/Billy-Bonkers-11654376" target="_blank" rel="noopener noreferrer">슈발베 공식 제품 정보</a> · 2026-09-06 확인
+          </p>
         </div>
       </div>
 
@@ -176,6 +182,33 @@
         </details>
       </div>
 
+      <div class="section preset-section">
+        <details class="advanced" id="presetPanel">
+          <summary id="presetSummary">마이 프리셋 <span id="presetCount" class="preset-count">0 / 9</span><span id="presetPending" class="preset-pending" hidden>미저장</span></summary>
+          <div class="advanced-body preset-body">
+            <p class="preset-help">현재 입력값으로 프리셋을 만들고, 편집 완료를 눌러 저장하세요.</p>
+            <div class="preset-toolbar">
+              <button type="button" id="presetCreate" class="preset-button preset-accent">＋ 마이 프리셋 생성</button>
+              <span id="presetCapacity" class="preset-help" hidden>최대 9개까지 저장할 수 있어요.</span>
+            </div>
+            <p id="presetEmpty" class="preset-empty">저장한 자전거가 없습니다.<br>자주 쓰는 타이어와 주행 조건을 기억해 두세요.</p>
+            <div id="presetList" class="preset-list"></div>
+            <div class="preset-files">
+              <button type="button" id="presetExport" class="preset-button">전체 내보내기</button>
+              <button type="button" id="presetImport" class="preset-button">파일 가져오기</button>
+              <input id="presetFile" type="file" accept=".json,application/json" hidden aria-label="프리셋 파일 선택">
+            </div>
+            <a id="presetDownload" class="preset-help" download="bike-pressure-presets.json" hidden>프리셋 파일 받기</a>
+            <p class="preset-help">이 기기의 브라우저에 저장됩니다. 다른 기기로 옮기려면 파일을 내보내세요.</p>
+            <div class="preset-footer">
+              <button type="button" id="presetCancel" class="preset-button">변경 취소</button>
+              <button type="button" id="presetDone" class="preset-button preset-accent">편집 완료</button>
+            </div>
+          </div>
+        </details>
+        <p id="presetNotice" class="preset-notice" role="status" aria-live="polite" hidden></p>
+      </div>
+
     </div>
 
     <div class="result-column">
@@ -237,7 +270,7 @@
     <details class="advanced footer-reference">
       <summary>참조</summary>
       <div class="advanced-body footer-copy">
-        BETA 4.1.3 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        BETA 4.2.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
         계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
       </div>
     </details>

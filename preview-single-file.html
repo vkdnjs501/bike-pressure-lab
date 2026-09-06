@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#02070b">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -492,6 +493,36 @@ input[readonly]{cursor:default}
 .mt-10{margin-top:10px}
 .mt-17{margin-top:17px}
 
+/* Secondary tool: scoped styles preserve the original header and calculator. */
+.preset-count{margin-left:8px;color:var(--muted);font-size:12px;font-weight:500}
+.preset-pending{margin-left:8px;color:var(--warning);font-size:12px}
+.preset-body{display:grid;gap:14px}
+.preset-help{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+.preset-toolbar,.preset-files,.preset-footer,.preset-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.preset-files,.preset-footer{padding-top:14px;border-top:1px solid var(--line)}
+.preset-footer{justify-content:flex-end}
+.preset-button{min-height:44px;padding:10px 12px;border:1px solid #2b3e4d;border-radius:12px;background:#09141d;color:#d7e2e8;font-weight:600;cursor:pointer;font-family:inherit;font-size:14px;line-height:1.3}
+.preset-button:hover{border-color:#668d33}
+.preset-button:focus-visible,.preset-load:focus-visible,.preset-section summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.preset-button:disabled{opacity:.45;cursor:default}
+.preset-accent{background:var(--accent);border-color:var(--accent);color:#081108;font-weight:800;box-shadow:none}
+.preset-empty{margin:0;padding:18px 14px;border:1px dashed #2b3e4d;border-radius:14px;color:var(--muted);font-size:14px;line-height:1.7}
+.preset-list{display:grid;gap:8px}
+.preset-card{min-width:0;border:1px solid var(--line);border-radius:14px;background:#09141d;overflow:hidden}
+.preset-card.is-active{border-color:#7eb930}
+.preset-row{display:flex;align-items:center;gap:8px;padding:10px}
+.preset-load{flex:1;min-width:0;min-height:44px;padding:3px 2px;border:0;background:transparent;color:var(--text);text-align:left;cursor:pointer;font:inherit}
+.preset-load strong{display:block;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.preset-load small{display:block;margin-top:3px;color:var(--muted);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.preset-card.is-active .preset-load strong{color:var(--accent-2)}
+.preset-editor{padding:14px;border-top:1px solid var(--line)}
+.preset-editor label{display:block;margin-bottom:7px;font-size:14px;font-weight:700}
+.preset-editor input{font-size:16px}
+.preset-actions{margin-top:12px}
+.preset-delete{color:var(--danger)}
+.preset-notice{margin:10px 0 0;color:var(--accent-2);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.preset-section [hidden]{display:none!important}
+
 @media(max-width:860px){
   .grid{grid-template-columns:1fr}
   .result-column{gap:10px}
@@ -519,7 +550,7 @@ input[readonly]{cursor:default}
 }
 
 </style>
-  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.1.3 Preview</title>
+  <title>YEONGDEUNGPO BIKE PRESSURE LAB — Beta 4.2.0</title>
 </head>
 <body>
 <div class="wrap">
@@ -530,7 +561,7 @@ input[readonly]{cursor:default}
       <h1>공기압 계산기</h1>
       <p>클린처 · 한국 기후 보정 · Front / Rear PSI</p>
     </div>
-    <div class="badge" aria-label="Beta version">BETA 4.1.3</div>
+    <div class="badge" aria-label="Beta version">BETA 4.2.0</div>
   </div>
 
   <div class="grid">
@@ -601,7 +632,13 @@ input[readonly]{cursor:default}
             <option selected value="schwalbeOne">4. Schwalbe One · Folding Bead</option>
             <option value="marathonRacer">5. Schwalbe Marathon Racer · Folding/Wire 계열</option>
             <option value="chaoyangMtb">6. Chaoyang 보급형 MTB · Wire Bead</option>
+            <option value="billyBonkers20">7. 슈발베 빌리봉커 20×2.00 · Performance / ADDIX</option>
           </select>
+          <p id="tireInfo" class="hint" hidden aria-live="polite">20×2.00 · ETRTO 50-406 · 폴딩 · 튜브용 · 67 EPI · 355g.<br>
+            펌프트랙·더트점프·슬로프스타일용. 미세 돌기와 촘촘한 블록이 흙·모래 노면의 접지를 돕고, 경사진 돌기가 구름을 돕습니다.<br>
+            공식 허용범위 30–65 PSI (2.0–4.5 bar). 제품 선택 시 20인치·공칭 폭 50mm로 설정됩니다. 다른 크기·사양에는 이 범위를 적용하지 마세요.<br>
+            <a href="https://www.schwalbe.com/en/Billy-Bonkers-11654376" target="_blank" rel="noopener noreferrer">슈발베 공식 제품 정보</a> · 2026-09-06 확인
+          </p>
         </div>
       </div>
 
@@ -675,6 +712,33 @@ input[readonly]{cursor:default}
         </details>
       </div>
 
+      <div class="section preset-section">
+        <details class="advanced" id="presetPanel">
+          <summary id="presetSummary">마이 프리셋 <span id="presetCount" class="preset-count">0 / 9</span><span id="presetPending" class="preset-pending" hidden>미저장</span></summary>
+          <div class="advanced-body preset-body">
+            <p class="preset-help">현재 입력값으로 프리셋을 만들고, 편집 완료를 눌러 저장하세요.</p>
+            <div class="preset-toolbar">
+              <button type="button" id="presetCreate" class="preset-button preset-accent">＋ 마이 프리셋 생성</button>
+              <span id="presetCapacity" class="preset-help" hidden>최대 9개까지 저장할 수 있어요.</span>
+            </div>
+            <p id="presetEmpty" class="preset-empty">저장한 자전거가 없습니다.<br>자주 쓰는 타이어와 주행 조건을 기억해 두세요.</p>
+            <div id="presetList" class="preset-list"></div>
+            <div class="preset-files">
+              <button type="button" id="presetExport" class="preset-button">전체 내보내기</button>
+              <button type="button" id="presetImport" class="preset-button">파일 가져오기</button>
+              <input id="presetFile" type="file" accept=".json,application/json" hidden aria-label="프리셋 파일 선택">
+            </div>
+            <a id="presetDownload" class="preset-help" download="bike-pressure-presets.json" hidden>프리셋 파일 받기</a>
+            <p class="preset-help">이 기기의 브라우저에 저장됩니다. 다른 기기로 옮기려면 파일을 내보내세요.</p>
+            <div class="preset-footer">
+              <button type="button" id="presetCancel" class="preset-button">변경 취소</button>
+              <button type="button" id="presetDone" class="preset-button preset-accent">편집 완료</button>
+            </div>
+          </div>
+        </details>
+        <p id="presetNotice" class="preset-notice" role="status" aria-live="polite" hidden></p>
+      </div>
+
     </div>
 
     <div class="result-column">
@@ -736,7 +800,7 @@ input[readonly]{cursor:default}
     <details class="advanced footer-reference">
       <summary>참조</summary>
       <div class="advanced-body footer-copy">
-        BETA 4.1.3 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
+        BETA 4.2.0 · 기본 기후 기준: 서울특별시 · KMA 2025 월평균 기온 기반.<br>
         계산 원칙: Schwalbe 폭×하중 기준표 → 휠직경·자전거 타입·타이어 구조·노면 보정 → Gay-Lussac 온도 보정 → 제조사/사이드월 허용범위 검증 → 최종 권장압력.
       </div>
     </details>
@@ -744,7 +808,7 @@ input[readonly]{cursor:default}
 </div>
 
 
-<script>
+  <script>
 const CONSTANTS = Object.freeze({
   PSI_TO_BAR: 0.0689476,
   PSI_TO_KPA: 6.89476,
@@ -848,6 +912,14 @@ const DATA = Object.freeze({
     kenda:         { factor: 1.00, label: "Kenda 보급형 · Wire", casing: "wire" },
     schwalbeOne:   { factor: .99,  label: "Schwalbe One · Folding", casing: "folding" },
     marathonRacer: { factor: .99,  label: "Marathon Racer", casing: "folding" },
+    billyBonkers20: {
+      factor: 1.00, label: "슈발베 빌리봉커 20×2.00 · Performance / ADDIX", casing: "folding",
+      wheel: 406, widthMm: 50, etrto: "50-406", productNumber: "11654376",
+      minPsi: 30, maxPsi: 65, minBar: 2.0, maxBar: 4.5,
+      source: "https://www.schwalbe.com/en/Billy-Bonkers-11654376",
+      verifiedOn: "2026-09-06"
+      // No manufacturer-published pressure correction for tread/ADDIX: neutral factor.
+    },
     chaoyangMtb:   { factor: 1.00, label: "Chaoyang MTB · Wire", casing: "wire" }
   },
 
@@ -873,7 +945,7 @@ const DATA = Object.freeze({
     ],
     decimal: [
       ['1.125"',1.125*25.4],['1.50"',1.50*25.4],['1.75"',1.75*25.4],
-      ['1.95"',1.95*25.4],['2.10"',2.10*25.4],['2.20"',2.20*25.4],
+      ['1.95"',1.95*25.4],['2.00"',2.00*25.4],['2.10"',2.10*25.4],['2.20"',2.20*25.4],
       ['2.25"',2.25*25.4],['2.40"',2.40*25.4],['2.50"',2.50*25.4]
     ],
     fraction: [
@@ -996,12 +1068,22 @@ function cst26x210ReferenceBand(input) {
   return null;
 }
 
+function productInputError(input) {
+  const product = DATA.tires[input.tireKey];
+  if (input.tireKey !== "billyBonkers20") return null;
+  if (input.wheel !== product.wheel) return "선택한 빌리봉커는 20인치(50-406) 전용입니다. 타이어 직경을 20인치로 맞추세요.";
+  if (isFiniteNumber(input.maxPsi) && input.maxPsi < product.minPsi)
+    return "입력한 MAX가 빌리봉커 공식 MIN 30 PSI보다 낮습니다. 타이어와 림의 허용범위를 다시 확인하세요.";
+  return null;
+}
+
 function validateInput(input) {
   const inRange = (value, min, max) => isFiniteNumber(value) && value >= min && value <= max;
   const optionalInRange = (value, min, max) => !isFiniteNumber(value) || inRange(value, min, max);
   const supportedWheels = new Set([305, 355, 406, 457, 507, 559, 584, 622]);
 
   return (
+    !productInputError(input) &&
     inRange(input.rider, 20, 180) &&
     inRange(input.cargo, 0, 80) &&
     inRange(input.bikeWeight, 5, 40) &&
@@ -1017,6 +1099,8 @@ function validateInput(input) {
 }
 
 function computePressure(input) {
+  const productError = productInputError(input);
+  if (productError) throw new Error(productError);
   const totalWeight = input.rider + input.cargo + input.bikeWeight;
   const climate = climateFor(input.regionKey, input.month);
   const rideTemp = climate + input.special.tempDelta;
@@ -1048,7 +1132,12 @@ function computePressure(input) {
   let front = thermalCorrect(frontBase, rideTemp);
   let rear = thermalCorrect(rearBase, rideTemp);
 
-  const referenceBand = cst26x210ReferenceBand(input);
+  const product = input.tireKey === "billyBonkers20" ? DATA.tires.billyBonkers20 : null;
+  const referenceBand = product ? {
+    minPsi: product.minPsi, maxPsi: product.maxPsi,
+    label: "빌리봉커 20×2.00 (50-406) · 슈발베 공식", source: product.source
+  } : cst26x210ReferenceBand(input);
+  const raisedToMinimum = Boolean(referenceBand && (front < referenceBand.minPsi || rear < referenceBand.minPsi));
 
   // Apply known/reference operating floor only when we have a matching reference.
   if (referenceBand) {
@@ -1066,6 +1155,9 @@ function computePressure(input) {
     appliedMaxPsi = referenceBand.maxPsi;
   }
 
+  // A typed higher MAX cannot relax this product's verified ceiling.
+  if (product) appliedMaxPsi = Math.min(appliedMaxPsi ?? product.maxPsi, product.maxPsi);
+
   if (isFiniteNumber(appliedMaxPsi)) {
     if (front > appliedMaxPsi) { front = appliedMaxPsi; limited = true; }
     if (rear > appliedMaxPsi) { rear = appliedMaxPsi; limited = true; }
@@ -1073,6 +1165,11 @@ function computePressure(input) {
 
   front = roundHalf(front);
   rear = roundHalf(rear);
+  if (product) {
+    const roundedCeiling = Math.floor(appliedMaxPsi * 2) / 2;
+    front = clamp(front, product.minPsi, roundedCeiling);
+    rear = clamp(rear, product.minPsi, roundedCeiling);
+  }
 
   const rawAverage = (frontBase + rearBase) / 2;
   const finalAverage = (front + rear) / 2;
@@ -1084,6 +1181,7 @@ function computePressure(input) {
     front,
     rear,
     limited,
+    raisedToMinimum,
     appliedMaxPsi,
     referenceBand,
     sourceGuide: {
@@ -1115,6 +1213,346 @@ function computePressure(input) {
 }
 
 
+const PRESET_STORAGE_KEY = "ybpl.my-presets.v1";
+const PRESET_LIMIT = 9;
+const PRESET_FIELDS = [
+  "rider", "cargo", "bikeWeight", "wheel", "widthStandard", "widthPreset",
+  "tire", "surface", "special", "region", "month", "manualWidth",
+  "frontWidth", "rearWidth", "rimWidth", "maxPsi"
+];
+const WHEEL_VALUES = ["305", "355", "406", "457", "507", "559", "622", "622", "584"];
+const FILE_LIMIT = 128 * 1024;
+const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+const clonePresets = value => value.map(item => ({ name: item.name, settings: { ...item.settings } }));
+const presetName = (item, index) => item.name || `마이 프리셋 ${index + 1}`;
+
+// Rebuild from a fixed schema; files never supply coefficients or executable code.
+function normalizeSettings(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("프리셋의 입력값 형식을 확인하세요.");
+  const settings = {};
+  for (const key of [...PRESET_FIELDS, "bikeKey"]) {
+    if (!own(value, key) || typeof value[key] !== "string" || value[key].length > 64) throw new Error("프리셋에 필요한 입력값이 없거나 올바르지 않습니다.");
+    settings[key] = value[key];
+  }
+  if (!Number.isInteger(value.wheelIndex) || WHEEL_VALUES[value.wheelIndex] !== settings.wheel) throw new Error("저장한 휠 규격을 확인하세요.");
+  settings.wheelIndex = value.wheelIndex;
+  for (const [field, options] of [["bikeKey", DATA.bikes], ["tire", DATA.tires], ["surface", DATA.surfaces], ["special", DATA.specials], ["region", DATA.regions], ["widthStandard", DATA.widths]]) {
+    if (!own(options, settings[field])) throw new Error("이 버전에서 지원하지 않는 선택값이 있습니다.");
+  }
+  if (!DATA.widths[settings.widthStandard].some(([, mm]) => mm.toFixed(4) === settings.widthPreset)) throw new Error("타이어 폭 규격을 확인하세요.");
+  const numberValue = (key, optional = false) => {
+    const text = settings[key];
+    if (optional && text === "") return NaN;
+    if (text.trim() === "" || !Number.isFinite(Number(text))) throw new Error("숫자 입력값을 확인하세요.");
+    return Number(text);
+  };
+  const width = settings.manualWidth === "" ? Number(settings.widthPreset) : numberValue("manualWidth");
+  const input = {
+    rider: numberValue("rider"), cargo: numberValue("cargo"), bikeWeight: numberValue("bikeWeight"),
+    wheel: Number(settings.wheel), width,
+    frontWidth: settings.frontWidth === "" ? width : numberValue("frontWidth"),
+    rearWidth: settings.rearWidth === "" ? width : numberValue("rearWidth"),
+    rimWidth: numberValue("rimWidth", true), maxPsi: numberValue("maxPsi", true),
+    bike: DATA.bikes[settings.bikeKey], tireKey: settings.tire, tire: DATA.tires[settings.tire],
+    surface: DATA.surfaces[settings.surface], special: DATA.specials[settings.special],
+    regionKey: settings.region, month: numberValue("month")
+  };
+  if (!validateInput(input)) throw new Error("입력 범위와 타이어·휠 조합을 확인한 뒤 다시 저장하세요.");
+  return settings;
+}
+
+function normalizePresets(items) {
+  if (!Array.isArray(items) || items.length > PRESET_LIMIT) throw new Error("프리셋은 최대 9개까지 저장할 수 있습니다.");
+  return items.map(item => {
+    if (!item || typeof item.name !== "string" || item.name.length > 40 || /[\u0000-\u001f\u007f]/.test(item.name)) throw new Error("자전거 이름은 40자 이내로 입력하세요.");
+    return { name: item.name.trim(), settings: normalizeSettings(item.settings) };
+  });
+}
+
+function packPresets(items) {
+  return JSON.stringify({ app: "bike-pressure-lab", schemaVersion: 1, presets: normalizePresets(items) });
+}
+
+function parsePresets(text) {
+  if (typeof text !== "string" || text.length > FILE_LIMIT) throw new Error("프리셋 파일은 128KB 이하만 가져올 수 있습니다.");
+  let value;
+  try { value = JSON.parse(text); } catch { throw new Error("올바른 프리셋 파일이 아닙니다."); }
+  if (!value || value.app !== "bike-pressure-lab" || value.schemaVersion !== 1) throw new Error("이 버전의 Bike Pressure Lab 프리셋 파일을 선택하세요.");
+  return normalizePresets(value.presets);
+}
+
+function mergePresets(current, incoming) {
+  if (current.length + incoming.length > PRESET_LIMIT) throw new Error(`남은 자리는 ${PRESET_LIMIT - current.length}개입니다. 파일의 ${incoming.length}개를 모두 추가할 수 없습니다.`);
+  return normalizePresets([...current, ...incoming]);
+}
+
+function initPresets({ capture, restore }) {
+  const el = id => document.getElementById(id);
+  const panel = el("presetPanel");
+  const list = el("presetList");
+  let saved = [];
+  let draft = [];
+  let baseline = null;
+  let selectedIndex = -1;
+  let editorIndex = -1;
+  let dirty = false;
+  let importBusy = false;
+  let unreadable = false;
+  let downloadUrl = null;
+
+  function notice(message, warning = false) {
+    const node = el("presetNotice");
+    node.textContent = message;
+    node.hidden = !message;
+    node.classList.toggle("warn", warning);
+  }
+
+  function updateControls() {
+    dirty = JSON.stringify(draft) !== JSON.stringify(saved);
+    el("presetCount").textContent = `${draft.length} / ${PRESET_LIMIT}`;
+    el("presetPending").hidden = !dirty;
+    el("presetCreate").disabled = draft.length >= PRESET_LIMIT || importBusy;
+    el("presetCapacity").hidden = draft.length < PRESET_LIMIT;
+    el("presetExport").disabled = draft.length === 0;
+    el("presetCancel").disabled = !dirty;
+    el("presetDone").disabled = importBusy;
+    el("presetImport").disabled = importBusy;
+    el("presetEmpty").hidden = draft.length > 0;
+  }
+
+  function button(text, action, index, className = "preset-button") {
+    const node = document.createElement("button");
+    node.type = "button";
+    node.className = className;
+    node.textContent = text;
+    node.dataset.action = action;
+    node.dataset.index = String(index);
+    return node;
+  }
+
+  function render() {
+    list.replaceChildren(...draft.map((item, index) => {
+      const card = document.createElement("div");
+      card.className = "preset-card";
+      card.classList.toggle("is-active", index === selectedIndex);
+      const row = document.createElement("div");
+      row.className = "preset-row";
+      const load = button("", "load", index, "preset-load");
+      load.setAttribute("aria-label", `${presetName(item, index)} 불러오기`);
+      const title = document.createElement("strong");
+      title.textContent = presetName(item, index);
+      const info = document.createElement("small");
+      const s = item.settings;
+      const width = s.manualWidth || String(Number(s.widthPreset));
+      info.textContent = `${DATA.tires[s.tire].label} · ${width} mm`;
+      load.append(title, info);
+      const edit = button("편집", "edit", index);
+      edit.setAttribute("aria-label", `${presetName(item, index)} 편집`);
+      edit.setAttribute("aria-expanded", String(editorIndex === index));
+      edit.setAttribute("aria-controls", `preset-editor-${index}`);
+      row.append(load, edit);
+      const editor = document.createElement("div");
+      editor.className = "preset-editor";
+      editor.id = `preset-editor-${index}`;
+      editor.hidden = editorIndex !== index;
+      const label = document.createElement("label");
+      label.htmlFor = `preset-name-${index}`;
+      label.textContent = `자전거 이름 ${index + 1}`;
+      const name = document.createElement("input");
+      name.id = label.htmlFor;
+      name.type = "text";
+      name.maxLength = 40;
+      name.value = presetName(item, index);
+      name.dataset.index = String(index);
+      name.autocomplete = "off";
+      const actions = document.createElement("div");
+      actions.className = "preset-actions";
+      actions.append(button("현재 값으로 갱신", "overwrite", index), button("내보내기", "export", index), button("삭제", "delete", index, "preset-button preset-delete"));
+      editor.append(label, name, actions);
+      card.append(row, editor);
+      return card;
+    }));
+    updateControls();
+  }
+
+  function focusName() {
+    const input = el(`preset-name-${editorIndex}`);
+    if (input) { input.focus(); input.select(); }
+  }
+
+  function download(items) {
+    const blob = new Blob([packPresets(items)], { type: "application/json" });
+    const previousUrl = downloadUrl;
+    downloadUrl = URL.createObjectURL(blob);
+    const anchor = el("presetDownload");
+    anchor.href = downloadUrl;
+    anchor.hidden = false;
+    anchor.click();
+    if (previousUrl) setTimeout(() => URL.revokeObjectURL(previousUrl), 30000);
+    notice("파일 저장을 요청했습니다. 다운로드가 시작되지 않으면 ‘프리셋 파일 받기’를 눌러 주세요.");
+  }
+
+  function finish() {
+    if (importBusy) return;
+    if (!dirty) {
+      panel.open = false;
+      el("presetSummary").focus();
+      return;
+    }
+    let text;
+    try { text = packPresets(draft); }
+    catch (error) { notice(error.message, true); return; }
+    try {
+      const current = window.localStorage.getItem(PRESET_STORAGE_KEY);
+      if (current !== baseline) throw new Error("다른 창에서 저장 내용이 바뀌었습니다. 편집 중인 목록을 내보낸 뒤 새로고침해 주세요.");
+      if (unreadable && !window.confirm("기존 저장 정보를 읽을 수 없습니다. 지금 편집한 목록으로 교체할까요?")) return;
+      window.localStorage.setItem(PRESET_STORAGE_KEY, text);
+      baseline = text;
+      saved = parsePresets(text);
+      draft = clonePresets(saved);
+      unreadable = false;
+      editorIndex = -1;
+      render();
+      panel.open = false;
+      notice(`프리셋 ${saved.length}개를 저장했습니다.`);
+      el("presetSummary").focus();
+    } catch (error) {
+      notice(error instanceof Error && error.message.includes("다른 창") ? error.message : "기기에 저장하지 못했습니다. 편집 내용은 열어 둔 화면에 남아 있으니 파일로 내보내 주세요.", true);
+    }
+  }
+
+  el("presetCreate").addEventListener("click", () => {
+    if (draft.length >= PRESET_LIMIT || importBusy) return;
+    try {
+      const settings = normalizeSettings(capture());
+      draft.push({ name: "", settings });
+      editorIndex = draft.length - 1;
+      render();
+      focusName();
+      notice("현재 입력값을 담았습니다. 이름을 정한 뒤 편집 완료를 눌러 저장하세요.");
+    } catch (error) { notice(error.message, true); }
+  });
+
+  list.addEventListener("input", event => {
+    const node = event.target;
+    if (!(node instanceof HTMLInputElement)) return;
+    const index = Number(node.dataset.index);
+    if (!draft[index]) return;
+    draft[index].name = node.value.trim() === `마이 프리셋 ${index + 1}` ? "" : node.value;
+    const row = node.closest(".preset-card").querySelector(".preset-row");
+    row.querySelector("strong").textContent = presetName(draft[index], index);
+    row.querySelector(".preset-load").setAttribute("aria-label", `${presetName(draft[index], index)} 불러오기`);
+    updateControls();
+  });
+
+  list.addEventListener("click", event => {
+    const target = event.target.closest("button[data-action]");
+    if (!target || !list.contains(target)) return;
+    const index = Number(target.dataset.index);
+    const item = draft[index];
+    if (!item) return;
+    try {
+      switch (target.dataset.action) {
+        case "load":
+          restore(normalizeSettings(item.settings));
+          selectedIndex = index;
+          render();
+          list.querySelectorAll(".preset-load")[index].focus();
+          notice(`${presetName(item, index)} 설정을 불러와 다시 계산했습니다.`);
+          break;
+        case "edit":
+          editorIndex = editorIndex === index ? -1 : index;
+          render();
+          if (editorIndex >= 0) focusName();
+          else list.querySelectorAll('[data-action="edit"]')[index].focus();
+          break;
+        case "overwrite": {
+          const settings = normalizeSettings(capture());
+          if (!window.confirm(`${presetName(item, index)}의 입력값을 현재 값으로 바꿀까요? 편집 완료를 누르면 저장됩니다.`)) return;
+          item.settings = settings;
+          render();
+          notice("현재 입력값으로 바꿨습니다. 편집 완료를 눌러 저장하세요.");
+          break;
+        }
+        case "delete":
+          if (!window.confirm(`${presetName(item, index)}을 삭제할까요? 편집 완료 전에는 변경 취소로 되돌릴 수 있습니다.`)) return;
+          draft.splice(index, 1);
+          selectedIndex = selectedIndex === index ? -1 : selectedIndex > index ? selectedIndex - 1 : selectedIndex;
+          editorIndex = -1;
+          render();
+          el("presetCreate").focus();
+          notice("삭제를 반영하려면 편집 완료를 누르세요.");
+          break;
+        case "export": download([{ ...item, name: presetName(item, index) }]); break;
+      }
+    } catch (error) { notice(error.message, true); }
+  });
+
+  el("presetCancel").addEventListener("click", () => {
+    if (dirty && !window.confirm("저장하지 않은 프리셋 변경사항을 취소할까요?")) return;
+    draft = clonePresets(saved);
+    selectedIndex = -1;
+    editorIndex = -1;
+    render();
+    notice("마지막으로 저장한 프리셋 목록으로 되돌렸습니다.");
+  });
+  el("presetDone").addEventListener("click", finish);
+  el("presetExport").addEventListener("click", () => {
+    try { download(draft); } catch (error) { notice(error.message, true); }
+  });
+  el("presetImport").addEventListener("click", () => {
+    el("presetFile").value = "";
+    el("presetFile").click();
+  });
+  el("presetFile").addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+    if (!file || importBusy) return;
+    importBusy = true;
+    updateControls();
+    try {
+      if (file.size > FILE_LIMIT) throw new Error("프리셋 파일은 128KB 이하만 가져올 수 있습니다.");
+      const incoming = parsePresets(await file.text());
+      if (incoming.length === 0) throw new Error("파일에 저장된 프리셋이 없습니다.");
+      draft = mergePresets(draft, incoming);
+      editorIndex = -1;
+      render();
+      notice(`${incoming.length}개를 추가했습니다. 편집 완료를 눌러 저장하세요.`);
+    } catch (error) { notice(error.message || "파일을 읽지 못했습니다.", true); }
+    finally { importBusy = false; updateControls(); event.target.value = ""; }
+  });
+  panel.addEventListener("toggle", () => {
+    if (!panel.open && dirty) notice("저장하지 않은 편집 내용이 있습니다. 다시 펼쳐 편집 완료를 눌러 주세요.", true);
+  });
+  window.addEventListener("beforeunload", event => {
+    if (dirty) { event.preventDefault(); event.returnValue = ""; }
+  });
+  window.addEventListener("storage", event => {
+    if (event.key !== PRESET_STORAGE_KEY && event.key !== null) return;
+    if (dirty) { notice("다른 창의 저장 내용이 바뀌었습니다. 편집한 목록을 먼저 내보내 주세요.", true); return; }
+    try {
+      const text = window.localStorage.getItem(PRESET_STORAGE_KEY);
+      saved = text === null ? [] : parsePresets(text);
+      baseline = text;
+      unreadable = false;
+      draft = clonePresets(saved);
+      selectedIndex = -1;
+      editorIndex = -1;
+      render();
+    } catch { notice("다른 창의 저장 정보를 읽지 못했습니다. 새로고침해 주세요.", true); }
+  });
+
+  try {
+    baseline = window.localStorage.getItem(PRESET_STORAGE_KEY);
+    saved = baseline === null ? [] : parsePresets(baseline);
+    draft = clonePresets(saved);
+  } catch {
+    unreadable = baseline !== null;
+    notice("저장 정보를 읽지 못했습니다. 프리셋 파일이 있다면 가져오기를 이용하세요.", true);
+  }
+  render();
+}
+
+
 const $ = id => document.getElementById(id);
 const DOM = {};
 const CALCULATION_COOLDOWN_MS = 300;
@@ -1122,7 +1560,7 @@ let lastManualCalculationAt = -Infinity;
 
 const IDS = [
   "rider","cargo","bikeWeight","wheel","widthStandard","widthPreset","widthResolved",
-  "tire","surface","special","region","month","climateInfo",
+  "tireInfo","tire","surface","special","region","month","climateInfo",
   "manualWidth","frontWidth","rearWidth","rimWidth","maxPsi","calculate","resultTitle",
   "resultMeta","status","frontPsi","rearPsi","frontSub","rearSub","tempMetric",
   "weightMetric","wheelMetric","thermalMetric","logicText","referenceText","safetyText",
@@ -1180,6 +1618,22 @@ function baseWidthMm() {
 function updateResolvedWidth() {
   const width = baseWidthMm();
   DOM.widthResolved.value = isFiniteNumber(width) ? `${width.toFixed(1)} mm` : "—";
+}
+
+function syncTireProduct() {
+  const selected = DOM.tire.value === "billyBonkers20";
+  DOM.tireInfo.hidden = !selected;
+  if (selected) {
+    DOM.wheel.value = "406";
+    DOM.widthStandard.value = "decimal";
+    populateWidthPresets();
+    DOM.widthPreset.value = (2 * 25.4).toFixed(4);
+    DOM.manualWidth.value = "50"; // ETRTO nominal width; 2.00-inch label is rounded.
+    DOM.frontWidth.value = "";
+    DOM.rearWidth.value = "";
+    updateResolvedWidth();
+  }
+  calculateAndRender();
 }
 
 function updateClimateInfo() {
@@ -1277,6 +1731,15 @@ function renderResult(input, result) {
     renderStatus("CALCULATED");
   }
 
+  if (input.tireKey === "billyBonkers20") {
+    DOM.safetyText.textContent = `빌리봉커 20×2.00 공식 범위 30–65 PSI · 적용 범위 30–${result.appliedMaxPsi} PSI. ` +
+      (result.raisedToMinimum ? "MIN 미만 계산값을 30 PSI로 올렸습니다. " : "") +
+      (result.limited ? "MAX 초과 계산값을 상한으로 제한했습니다. " : "") +
+      "실제 타이어 측면과 림의 제한도 확인하세요. 일반 주행 참고 계산이며 점프·착지용 설정은 아닙니다.";
+    DOM.safetyText.classList.toggle("warn", result.limited || result.raisedToMinimum);
+    renderStatus(result.limited ? "MAX LIMITED" : result.raisedToMinimum ? "MIN LIMITED" : "CALCULATED", result.limited || result.raisedToMinimum);
+  }
+
   DOM.convPsi.textContent = result.representative.toFixed(1);
   DOM.convBar.textContent = result.conversions.representativeBar.toFixed(2);
   DOM.convKpa.textContent = Math.round(result.conversions.representativeKpa);
@@ -1292,6 +1755,9 @@ function calculateAndRender() {
 
   if (!validateInput(input)) {
     renderStatus("CHECK INPUT", true);
+    ["frontPsi", "rearPsi", "frontSub", "rearSub", "convPsi", "convBar", "convKpa"].forEach(id => DOM[id].textContent = "—");
+    DOM.safetyText.textContent = productInputError(input) ?? "입력값의 허용범위를 확인하세요.";
+    DOM.safetyText.classList.add("warn");
     return;
   }
 
@@ -1321,10 +1787,48 @@ function bindEvents() {
   DOM.manualWidth.addEventListener("input", updateResolvedWidth);
   DOM.region.addEventListener("change", updateClimateInfo);
   DOM.month.addEventListener("change", updateClimateInfo);
+  DOM.tire.addEventListener("change", syncTireProduct);
   DOM.calculate.addEventListener("click", handleCalculateClick);
 }
 
-function registerServiceWorker() {}
+function registerServiceWorker() {
+  if (window.location.protocol === "file:") return;
+  if (!("serviceWorker" in navigator)) return;
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      // 개발/로컬 환경에서는 Service Worker 등록 실패를 앱 동작과 분리합니다.
+    });
+  });
+}
+
+function capturePresetSettings() {
+  const settings = {};
+  for (const id of PRESET_FIELDS) {
+    if (DOM[id].validity?.badInput) throw new Error("숫자 입력값을 확인하세요.");
+    settings[id] = DOM[id].value;
+  }
+  settings.bikeKey = selectedBikeKey();
+  settings.wheelIndex = DOM.wheel.selectedIndex;
+  return settings;
+}
+
+function restorePresetSettings(settings) {
+  DOM.widthStandard.value = settings.widthStandard;
+  populateWidthPresets();
+  for (const id of PRESET_FIELDS) DOM[id].value = settings[id];
+  // 700C and the legacy 28.5-inch option share BSD 622: retain the exact label.
+  DOM.wheel.selectedIndex = settings.wheelIndex;
+  DOM.bikeRadios.forEach(radio => {
+    radio.checked = radio.value === settings.bikeKey;
+    radio.closest(".choice").classList.toggle("active", radio.checked);
+  });
+  // Restoring a model must retain saved measured widths, not apply new defaults.
+  DOM.tireInfo.hidden = settings.tire !== "billyBonkers20";
+  updateResolvedWidth();
+  updateClimateInfo();
+  calculateAndRender();
+}
 
 function init() {
   cacheDom();
@@ -1333,6 +1837,7 @@ function init() {
   updateClimateInfo();
   bindEvents();
   calculateAndRender();
+  initPresets({ capture: capturePresetSettings, restore: restorePresetSettings });
   registerServiceWorker();
 }
 
